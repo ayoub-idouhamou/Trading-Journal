@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Edge Journal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f6f8;--bg2:#ffffff;--bg3:#eef0f3;--bg4:#e4e7ec;
+  --border:#d8dce4;--border2:#c4c9d4;
+  --text:#1a1f2e;--text2:#4a5268;--text3:#8892a4;
+  --green:#007a5e;--green2:#005a44;--green-bg:#e6f5f1;
+  --red:#c0253a;--red2:#991c2d;--red-bg:#fde8eb;
+  --amber:#b45309;--amber-bg:#fef3e2;
+  --blue:#1a6fc4;--blue-bg:#e8f0fb;
+  --purple:#6d3fc4;--purple-bg:#f0ebfc;
+  --teal:#0e7490;--teal-bg:#e6f4f7;
+  --r:8px;--r2:12px;
+}
+body.dark{
+  --bg:#0a0c0f;--bg2:#111418;--bg3:#191d23;--bg4:#212730;
+  --border:#2a3040;--border2:#343d4f;
+  --text:#e8eaf0;--text2:#8892a4;--text3:#4a5568;
+  --green:#00d4a0;--green2:#00a07a;--green-bg:#001a14;
+  --red:#ff4d6d;--red2:#cc2244;--red-bg:#1a0010;
+  --amber:#f59e0b;--amber-bg:#1a1000;
+  --blue:#4a9eff;--blue-bg:#001428;
+  --purple:#a78bfa;--purple-bg:#0e0014;
+  --teal:#00bcd4;--teal-bg:#001a1f;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;min-height:100vh;overflow-x:hidden}
+.mono{font-family:'Courier New',monospace}
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 12px}
+.nav-top{display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px}
+.nav-logo{font-family:'Courier New',monospace;font-size:12px;color:var(--green);letter-spacing:.06em}
+.nav-sync{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:inherit}
+.nav-sync .dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+.nav-sync.ok .dot{background:var(--green)}
+.nav-sync.err .dot{background:var(--red)}
+.nav-sync.syncing .dot{background:var(--amber);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-tabs{display:flex;gap:3px;padding-bottom:8px;overflow-x:auto}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{background:none;border:1px solid transparent;color:var(--text2);font-size:12px;padding:5px 10px;border-radius:var(--r);cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
+.nav-tab.active{background:var(--bg3);border-color:var(--border2);color:var(--text)}
+.screen{display:none;padding:14px;max-width:500px;margin:0 auto}
+.screen.active{display:block}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:10px}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:11px;margin-bottom:8px}
+/* flow */
+.flow-question{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:14px;text-align:center;font-size:13px;line-height:1.5;margin-bottom:4px}
+.flow-label{font-family:'Courier New',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;text-align:center;margin-bottom:10px}
+.choices{display:grid;gap:7px;margin-bottom:14px}
+.choices.c2{grid-template-columns:1fr 1fr}
+.choices.c3{grid-template-columns:1fr 1fr 1fr}
+.choice-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 6px;font-size:13px;color:var(--text);cursor:pointer;text-align:center;font-family:inherit;transition:border-color .12s,color .12s}
+.choice-btn:active{border-color:var(--green);color:var(--green)}
+/* badges */
+.badge{display:inline-flex;align-items:center;font-family:'Courier New',monospace;font-size:10px;padding:3px 7px;border-radius:4px;letter-spacing:.04em;white-space:nowrap}
+.badge-gw{background:var(--green-bg);color:var(--green);border:1px solid var(--green2)}
+.badge-bw{background:var(--red-bg);color:var(--red);border:1px solid var(--red2)}
+.badge-gl{background:var(--blue-bg);color:var(--blue);border:1px solid #1a3a6a}
+.badge-bl{background:var(--red-bg);color:var(--red);border:1px solid var(--red2)}
+.badge-gp{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.badge-bp{background:var(--amber-bg);color:var(--amber);border:1px solid #5a3a00}
+.badge-bt{background:var(--teal-bg);color:var(--teal);border:1px solid #005060}
+/* selector buttons */
+.sel-row{display:grid;gap:6px;margin-bottom:10px}
+.sel-row.c2{grid-template-columns:1fr 1fr}
+.sel-row.c3{grid-template-columns:1fr 1fr 1fr}
+.sel-row.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+.sel-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:9px 4px;font-size:12px;color:var(--text2);cursor:pointer;text-align:center;font-family:inherit;transition:all .12s}
+.sel-btn.active{background:var(--bg4);border-color:var(--green);color:var(--green)}
+.sel-btn.purple.active{border-color:var(--purple);color:var(--purple)}
+.sel-btn.blue.active{border-color:var(--blue);color:var(--blue)}
+.sel-btn.amber.active{border-color:var(--amber);color:var(--amber)}
+/* form */
+.fld{margin-bottom:10px}
+.fld-label{font-size:11px;color:var(--text3);margin-bottom:5px;font-family:'Courier New',monospace;letter-spacing:.05em;text-transform:uppercase}
+textarea,input[type=text],input[type=date],input[type=number],select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:inherit;font-size:13px;padding:9px 11px;transition:border .12s;-webkit-appearance:none}
+textarea{resize:none;line-height:1.5}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--border2)}
+textarea::placeholder,input::placeholder{color:var(--text3)}
+select option{background:var(--bg3)}
+.price-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+/* btns */
+.btn{display:block;width:100%;padding:12px;border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;text-align:center;border:none;font-family:inherit;transition:all .12s}
+.btn-primary{background:var(--green);color:#000}
+.btn-primary:active{background:var(--green2)}
+.btn-ghost{background:none;border:1px solid var(--border2);color:var(--text2)}
+.btn-teal{background:var(--teal-bg);border:1px solid #005060;color:var(--teal)}
+.btn-danger{background:none;border:1px solid var(--red2);color:var(--red);font-size:12px;padding:8px}
+.section-label{font-family:'Courier New',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+/* entries */
+.entry-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:13px;margin-bottom:9px;cursor:pointer}
+.entry-card:active{border-color:var(--border2)}
+.entry-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.entry-date{font-family:'Courier New',monospace;font-size:11px;color:var(--text3)}
+.entry-inst{font-family:'Courier New',monospace;font-size:12px;color:var(--text2)}
+.entry-preview{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.entry-meta{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;align-items:center}
+.divider{border:none;border-top:1px solid var(--border);margin:12px 0}
+.empty-state{text-align:center;padding:36px 20px;color:var(--text3);font-size:13px;line-height:1.9}
+.back-btn{background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px;margin-bottom:14px;font-family:inherit}
+/* stats */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:11px}
+.stat-val{font-family:'Courier New',monospace;font-size:21px;font-weight:700;margin-bottom:2px}
+.stat-lbl{font-size:11px;color:var(--text2)}
+.bar-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.bar-label{font-family:'Courier New',monospace;font-size:11px;color:var(--text2);width:32px}
+.bar-track{flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px}
+.bar-count{font-family:'Courier New',monospace;font-size:10px;color:var(--text3);width:18px;text-align:right}
+/* search */
+.filter-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.chip{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit}
+.chip.active{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.chip.inst.active{border-color:var(--purple);color:var(--purple);background:var(--purple-bg)}
+.chip.bias.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.chip.mode.active{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.search-wrap{position:relative;margin-bottom:9px}
+.search-wrap input{padding-left:30px;background:var(--bg2);border-color:var(--border2)}
+.search-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.highlight{background:rgba(0,212,160,.15);color:var(--green);border-radius:2px}
+.result-count{font-family:'Courier New',monospace;font-size:11px;color:var(--text3);margin-bottom:9px}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.date-row input{font-size:12px;padding:7px 9px}
+/* drive panel */
+.drive-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:12px}
+.drive-status{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.drive-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.info-box{background:var(--teal-bg);border:1px solid #004a58;border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--teal);line-height:1.6;margin-bottom:10px}
+.warn-box{background:var(--amber-bg);border:1px solid #5a3a00;border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--amber);line-height:1.6;margin-bottom:10px}
+.step-list{counter-reset:steps;padding:0}
+.step-list li{counter-increment:steps;display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:12px;color:var(--text2);line-height:1.5}
+.step-list li::before{content:counter(steps);font-family:'Courier New',monospace;font-size:10px;color:var(--text3);background:var(--bg4);border:1px solid var(--border2);border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.tab-switch{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.tab-switch-btn{background:none;border:none;color:var(--text2);font-size:13px;padding:9px;cursor:pointer;font-family:inherit;transition:all .12s}
+.tab-switch-btn.active{background:var(--bg4);color:var(--text)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-top">
+    <span class="nav-logo mono">// EDGE JOURNAL</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="theme-btn" onclick="toggleTheme()" style="background:none;border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--text2);cursor:pointer;font-family:inherit">&#9788; Light</button>
+      <button class="nav-sync" id="sync-btn" onclick="showScreen('settings')">
+        <span class="dot"></span>
+        <span id="sync-label">offline</span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('log')">Log</button>
+    <button class="nav-tab" onclick="showScreen('backtest')">Backtest</button>
+    <button class="nav-tab" onclick="showScreen('journal')">Journal</button>
+    <button class="nav-tab" onclick="showScreen('search')">Search</button>
+    <button class="nav-tab" onclick="showScreen('stats')">Stats</button>
+    <button class="nav-tab" onclick="showScreen('settings')">⚙</button>
+  </div>
+</nav>
+
+<!-- LOG -->
+<div id="screen-log" class="screen active"><div id="flow-container"></div></div>
+
+<!-- BACKTEST -->
+<div id="screen-backtest" class="screen">
+  <div id="bt-list-view">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="section-label" style="margin:0">Backtest log</span>
+      <button class="btn btn-teal" style="width:auto;padding:7px 14px;font-size:12px" onclick="showBtForm()">+ New entry</button>
+    </div>
+    <div id="bt-list"></div>
+  </div>
+  <div id="bt-form-view" style="display:none">
+    <button class="back-btn" onclick="hideBtForm()">&#8592; back</button>
+    <div id="bt-form-content"></div>
+  </div>
+  <div id="bt-detail-view" style="display:none">
+    <button class="back-btn" id="bt-detail-back">&#8592; back</button>
+    <div id="bt-detail-content"></div>
+  </div>
+</div>
+
+<!-- JOURNAL -->
+<div id="screen-journal" class="screen">
+  <div class="section-label">Live trade log</div>
+  <div id="journal-list"></div>
+</div>
+
+<!-- DETAIL -->
+<div id="screen-detail" class="screen">
+  <button class="back-btn" id="detail-back-btn">&#8592; back</button>
+  <div id="detail-content"></div>
+</div>
+
+<!-- SEARCH -->
+<div id="screen-search" class="screen">
+  <div class="section-label">Filter &amp; search</div>
+  <div class="tab-switch">
+    <button class="tab-switch-btn active" id="srch-live-btn" onclick="setSrchMode('live')">Live trades</button>
+    <button class="tab-switch-btn" id="srch-bt-btn" onclick="setSrchMode('bt')">Backtest</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-ico">&#9906;</span>
+    <input type="text" id="kw-input" placeholder="keyword in any field..." oninput="runSearch()">
+  </div>
+  <div id="live-filters">
+    <div class="section-label">Outcome</div>
+    <div class="filter-row" id="outcome-filters">
+      <button class="chip active" data-val="" onclick="toggleChip(this,'outcome')">All</button>
+      <button class="chip" data-val="gw" onclick="toggleChip(this,'outcome')">good win</button>
+      <button class="chip" data-val="bw" onclick="toggleChip(this,'outcome')">bad win</button>
+      <button class="chip" data-val="gl" onclick="toggleChip(this,'outcome')">good loss</button>
+      <button class="chip" data-val="bl" onclick="toggleChip(this,'outcome')">bad loss</button>
+      <button class="chip" data-val="gp" onclick="toggleChip(this,'outcome')">good pass</button>
+      <button class="chip" data-val="bp" onclick="toggleChip(this,'outcome')">bad pass</button>
+    </div>
+  </div>
+  <div id="bt-filters" style="display:none">
+    <div class="section-label">Outcome</div>
+    <div class="filter-row" id="bt-outcome-filters">
+      <button class="chip active" data-val="" onclick="toggleChip(this,'bt-outcome')">All</button>
+      <button class="chip" data-val="Win" onclick="toggleChip(this,'bt-outcome')">Win</button>
+      <button class="chip" data-val="Loss" onclick="toggleChip(this,'bt-outcome')">Loss</button>
+      <button class="chip" data-val="BE" onclick="toggleChip(this,'bt-outcome')">BE</button>
+    </div>
+    <div class="section-label">Session</div>
+    <div class="filter-row" id="bt-session-filters">
+      <button class="chip active" data-val="" onclick="toggleChip(this,'bt-session')">All</button>
+      <button class="chip" data-val="London" onclick="toggleChip(this,'bt-session')">London</button>
+      <button class="chip" data-val="NY AM" onclick="toggleChip(this,'bt-session')">NY AM</button>
+      <button class="chip" data-val="NY PM" onclick="toggleChip(this,'bt-session')">NY PM</button>
+      <button class="chip" data-val="Asia" onclick="toggleChip(this,'bt-session')">Asia</button>
+    </div>
+  </div>
+  <div class="section-label">Instrument</div>
+  <div class="filter-row" id="inst-filters">
+    <button class="chip inst active" data-val="" onclick="toggleChip(this,'inst')">All</button>
+    <button class="chip inst" data-val="ES" onclick="toggleChip(this,'inst')">ES</button>
+    <button class="chip inst" data-val="NQ" onclick="toggleChip(this,'inst')">NQ</button>
+    <button class="chip inst" data-val="YM" onclick="toggleChip(this,'inst')">YM</button>
+  </div>
+  <div class="section-label">Date range</div>
+  <div class="date-row">
+    <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">From</div><input type="date" id="date-from" oninput="runSearch()"></div>
+    <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">To</div><input type="date" id="date-to" oninput="runSearch()"></div>
+  </div>
+  <div id="result-count" class="result-count"></div>
+  <div id="search-results"></div>
+</div>
+
+<!-- STATS -->
+<div id="screen-stats" class="screen">
+  <div class="tab-switch">
+    <button class="tab-switch-btn active" id="stats-live-btn" onclick="setStatsMode('live')">Live trades</button>
+    <button class="tab-switch-btn" id="stats-bt-btn" onclick="setStatsMode('bt')">Backtest</button>
+  </div>
+  <div id="stats-content"></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="screen-settings" class="screen">
+
+  <!-- ── SYNC STATUS BAR ── -->
+  <div class="section-label">Sync status</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div class="drive-dot" id="drive-dot" style="background:var(--text3);width:10px;height:10px;border-radius:50%;flex-shrink:0"></div>
+      <span id="drive-status-text" style="font-size:13px;color:var(--text2)">Not connected</span>
+    </div>
+    <div id="drive-connected" style="display:none">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Signed in as <span id="drive-user" style="color:var(--text);font-weight:500"></span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <button class="btn btn-teal" style="font-size:12px;padding:9px" onclick="syncNow()">↻ Sync now</button>
+        <button class="btn btn-danger" style="padding:9px" onclick="driveSignOut()">Sign out</button>
+      </div>
+    </div>
+    <div id="drive-setup-trigger" style="display:none">
+      <button class="btn btn-teal" onclick="showSetupGuide()">Set up Google Drive sync ↓</button>
+    </div>
+  </div>
+
+  <!-- ── SETUP GUIDE ── -->
+  <div id="drive-setup">
+    <div class="section-label">Google Drive setup — step by step</div>
+
+    <!-- WHY -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="font-size:13px;font-weight:500;margin-bottom:6px">How it works</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7">
+        The app stores all your data in a single file called <span class="mono" style="font-size:11px;background:var(--bg3);padding:1px 5px;border-radius:3px">edge_journal_data.json</span> saved directly in your Google Drive's private app folder. This folder is invisible to other apps and cannot be browsed in Drive — only this app can read it. Nothing is sent to any server except Google's own servers.
+      </div>
+      <div style="margin-top:10px;padding:8px 10px;background:var(--blue-bg);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;color:var(--blue);line-height:1.6">
+        ⏱ One-time setup, takes about 10 minutes. You will only do this once.
+      </div>
+    </div>
+
+    <!-- PREREQUISITE -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="font-size:12px;font-weight:600;color:var(--text3);font-family:'Courier New',monospace;letter-spacing:.06em;margin-bottom:8px">BEFORE YOU START</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7">
+        You need a <b style="color:var(--text)">Google account</b> and the app must be opened from a URL (not a local file path like <span class="mono" style="font-size:11px">file://...</span>). The easiest free option is to host the HTML file on <b style="color:var(--text)">GitHub Pages</b>:
+      </div>
+      <div style="margin-top:8px;padding:8px 10px;background:var(--bg3);border-radius:var(--r);font-size:12px;color:var(--text2);line-height:1.7">
+        1. Create a free account at <b style="color:var(--text)">github.com</b><br>
+        2. New repository → upload <span class="mono" style="font-size:11px">edge_journal.html</span> → rename it to <span class="mono" style="font-size:11px">index.html</span><br>
+        3. Settings → Pages → Source: main branch → Save<br>
+        4. Your app URL will be <span class="mono" style="font-size:11px">https://yourusername.github.io/reponame</span><br>
+        5. Open that URL in Chrome on your Android — bookmark it or Add to Home Screen
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--teal);color:#fff;font-family:'Courier New',monospace;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+        <div style="font-size:13px;font-weight:500">Create a Google Cloud project</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:34px">
+        Go to <b style="color:var(--teal)">console.cloud.google.com</b><br>
+        → Click the project dropdown at the top (says "Select a project")<br>
+        → Click <b style="color:var(--text)">New Project</b><br>
+        → Name it anything, e.g. <span class="mono" style="font-size:11px">EdgeJournal</span><br>
+        → Click <b style="color:var(--text)">Create</b> and wait a few seconds<br>
+        → Make sure the new project is selected in the dropdown
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--teal);color:#fff;font-family:'Courier New',monospace;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+        <div style="font-size:13px;font-weight:500">Enable the Google Drive API</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:34px">
+        In the left sidebar → <b style="color:var(--text)">APIs &amp; Services</b> → <b style="color:var(--text)">Library</b><br>
+        → Search for <span class="mono" style="font-size:11px">Google Drive API</span><br>
+        → Click the result → Click the blue <b style="color:var(--text)">Enable</b> button<br>
+        → Wait for it to enable (page will reload)
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--teal);color:#fff;font-family:'Courier New',monospace;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+        <div style="font-size:13px;font-weight:500">Configure the OAuth consent screen</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:34px">
+        → <b style="color:var(--text)">APIs &amp; Services</b> → <b style="color:var(--text)">OAuth consent screen</b><br>
+        → Select <b style="color:var(--text)">External</b> → click <b style="color:var(--text)">Create</b><br>
+        → App name: <span class="mono" style="font-size:11px">Edge Journal</span><br>
+        → User support email: select your Gmail address<br>
+        → Developer contact email: your Gmail address<br>
+        → Click <b style="color:var(--text)">Save and Continue</b><br>
+        → On the Scopes page → click <b style="color:var(--text)">Save and Continue</b> (no changes)<br>
+        → On Test users page → click <b style="color:var(--text)">+ Add Users</b> → add your own Gmail address → <b style="color:var(--text)">Save and Continue</b><br>
+        → Click <b style="color:var(--text)">Back to Dashboard</b>
+      </div>
+      <div style="margin-top:8px;margin-left:34px;padding:7px 10px;background:var(--amber-bg);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;color:var(--amber);line-height:1.6">
+        ⚠ Keep the app in <b>Testing</b> mode — you do not need to publish it. Only the Gmail addresses you add as test users can sign in, which is exactly what you want for a personal app.
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--teal);color:#fff;font-family:'Courier New',monospace;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</div>
+        <div style="font-size:13px;font-weight:500">Create the OAuth Client ID</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:34px">
+        → <b style="color:var(--text)">APIs &amp; Services</b> → <b style="color:var(--text)">Credentials</b><br>
+        → Click <b style="color:var(--text)">+ Create Credentials</b> → <b style="color:var(--text)">OAuth client ID</b><br>
+        → Application type: <b style="color:var(--text)">Web application</b><br>
+        → Name: anything, e.g. <span class="mono" style="font-size:11px">Edge Journal Web</span><br>
+        → Under <b style="color:var(--text)">Authorised JavaScript origins</b> → click <b style="color:var(--text)">+ Add URI</b><br>
+        → Paste your app's full URL, e.g. <span class="mono" style="font-size:11px">https://yourusername.github.io</span><br>
+        &nbsp;&nbsp;(no trailing slash, no path — just the origin)<br>
+        → Click <b style="color:var(--text)">Create</b>
+      </div>
+      <div style="margin-top:8px;margin-left:34px;padding:7px 10px;background:var(--green-bg);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;color:var(--green);line-height:1.6">
+        ✓ A dialog will show your <b>Client ID</b> — it looks like<br>
+        <span class="mono" style="font-size:11px">123456789-abcdefg.apps.googleusercontent.com</span><br>
+        Copy it and paste it below.
+      </div>
+    </div>
+
+    <!-- STEP 5 — input -->
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:var(--green);color:#fff;font-family:'Courier New',monospace;font-size:11px;font-weight:700;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">5</div>
+        <div style="font-size:13px;font-weight:500">Paste your Client ID here</div>
+      </div>
+      <div style="padding-left:34px">
+        <div class="fld-label" style="margin-bottom:6px">Client ID</div>
+        <input type="text" id="client-id-input" placeholder="123456789-abcdefg.apps.googleusercontent.com" style="margin-bottom:10px">
+        <button class="btn btn-primary" onclick="saveClientId()">Connect to Google Drive →</button>
+      </div>
+    </div>
+
+    <!-- TROUBLESHOOT -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:var(--text3);font-family:'Courier New',monospace;letter-spacing:.06em;margin-bottom:10px">TROUBLESHOOTING</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.9">
+        <b style="color:var(--text)">"Error 403: access_denied"</b><br>
+        → You forgot to add your Gmail to Test Users in Step 3. Go back and add it.<br><br>
+        <b style="color:var(--text)">"Error 400: redirect_uri_mismatch"</b><br>
+        → The URL in Authorised JavaScript origins doesn't exactly match the URL you're using. Check for trailing slashes or http vs https.<br><br>
+        <b style="color:var(--text)">Popup is blocked</b><br>
+        → Chrome blocked the sign-in popup. Tap the address bar → site settings → allow popups for this site.<br><br>
+        <b style="color:var(--text)">"This app isn't verified"</b><br>
+        → Click <b>Advanced</b> → <b>Go to Edge Journal (unsafe)</b>. This warning appears because the app is in Testing mode — it's your own app, so it's safe.<br><br>
+        <b style="color:var(--text)">Works on desktop but not Android</b><br>
+        → Make sure you added both the desktop and mobile URLs to Authorised JavaScript origins if they differ.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DATA ── -->
+  <div class="section-label">Data backup</div>
+  <div class="card">
+    <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">
+      Export a full JSON backup of all your live journal entries and backtest logs. Keep a copy somewhere safe — this is your safety net regardless of whether Drive sync is set up.
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-size:13px;color:var(--text2)">Export all data as JSON</span>
+      <button class="btn btn-ghost" style="width:auto;padding:7px 12px;font-size:12px" onclick="exportData()">Export ↓</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:var(--text2)">Import from JSON backup</span>
+      <label class="btn btn-ghost" style="width:auto;padding:7px 12px;font-size:12px;cursor:pointer">Import ↑<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════ DATA ═══════════════════ */
+const OL={gw:'good win',bw:'bad win',gl:'good loss',bl:'bad loss',gp:'good pass',bp:'bad pass'};
+const OB={gw:'badge-gw',bw:'badge-bw',gl:'badge-gl',bl:'badge-bl',gp:'badge-gp',bp:'badge-bp'};
+const OQ={
+  gw:['What would you improve with your execution on this trade?','How could you have managed this trade to increase the profit?','What can you do to repeat this type of trade in the future?'],
+  bw:['Where did you deviate from your plan or approach and why?','How could this flawed win have been avoided in the future?','What specifically was done incorrectly in this trade despite the outcome?'],
+  gl:['Was there any logical way to avoid this loss in the moment?','What specifically was done well in this trade despite the outcome?','Were emotions controlled after this losing trade was realized?'],
+  bl:['Where did you deviate from your plan or approach and why?','What were the warning signs that led into this losing trade?','Did your response to the outcome of this trade impact following trades?'],
+  gp:['What conditions were missing that prevented a valid setup?','What reinforced your confidence to remain inactive today?','Did avoiding unnecessary risk protect your mental clarity or capital?'],
+  bp:['What specifically caused you to miss the valid opportunity?','Was the setup identified in real time or only recognized afterward?','What process improvement would have allowed execution?']
+};
+const SESSIONS=['London','NY AM','NY PM','Asia'];
+const PROFILES=['Trend','Reversal','Range','Breakout','Failed Breakout','Gap Fill','Other'];
+const BIASES=['Bullish','Bearish','Neutral'];
+
+let flowState={},editingId=null,srchMode='live',statsMode='live',srchFilters={outcome:'',inst:'',bias:'',btOutcome:'',btSession:''};
+
+function getData(){try{return JSON.parse(localStorage.getItem('ej_data')||'{"live":[],"bt":[]}')}catch{return{live:[],bt:[]}}}
+function saveData(d){localStorage.setItem('ej_data',JSON.stringify(d));scheduleDriveSync()}
+function getLive(){return getData().live}
+function getBt(){return getData().bt}
+function saveLive(arr){const d=getData();d.live=arr;saveData(d)}
+function saveBt(arr){const d=getData();d.bt=arr;saveData(d)}
+
+/* ═══════════════════ NAV ═══════════════════ */
+function showScreen(s){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('screen-'+s).classList.add('active');
+  const tabs=['log','backtest','journal','search','stats','settings'];
+  const i=tabs.indexOf(s);if(i>=0)document.querySelectorAll('.nav-tab')[i].classList.add('active');
+  if(s==='journal')renderJournal();
+  if(s==='backtest')renderBtList();
+  if(s==='stats')renderStats();
+  if(s==='search')runSearch();
+  if(s==='log'&&!editingId)startFlow();
+  if(s==='settings')renderSettings();
+}
+
+/* ═══════════════════ FLOWCHART ═══════════════════ */
+function startFlow(){flowState={};editingId=null;renderStep('outcome')}
+
+function renderStep(step){
+  const c=document.getElementById('flow-container');
+  if(step==='outcome'){
+    c.innerHTML=`
+      <div style="text-align:center;margin-bottom:14px"><span class="mono" style="font-size:10px;color:var(--text3);letter-spacing:.1em">START HERE</span></div>
+      <div class="flow-question">Was the outcome of the trade a win or a loss?</div>
+      <div class="flow-label">select one</div>
+      <div class="choices c3">
+        <button class="choice-btn" style="color:var(--green);border-color:var(--green2)" onclick="pickOutcome('win')">Win</button>
+        <button class="choice-btn" style="color:var(--red);border-color:var(--red2)" onclick="pickOutcome('loss')">Loss</button>
+        <button class="choice-btn" onclick="pickOutcome('notrade')">No trade</button>
+      </div>`;
+  } else if(step==='process'){
+    const o=flowState.outcome;
+    const q=o==='win'?'Is this a trade you would take again without knowing the outcome was a win?':o==='loss'?'Is this a trade you would take again without knowing the outcome was a loss?':'Is there a valid trade that you missed during the trading day?';
+    const[y,n]=o==='notrade'?['No','Yes']:['Yes','No'];
+    c.innerHTML=`
+      <button class="back-btn" onclick="renderStep('outcome')">&#8592; back</button>
+      <div class="flow-question">${q}</div>
+      <div class="flow-label">${o==='notrade'?'was it a valid setup?':'was it process-driven?'}</div>
+      <div class="choices c2">
+        <button class="choice-btn" onclick="pickProcess('yes')">${y}</button>
+        <button class="choice-btn" onclick="pickProcess('no')">${n}</button>
+      </div>`;
+  } else if(step==='instrument'){
+    const oc=getOC();
+    c.innerHTML=`
+      <button class="back-btn" onclick="renderStep('process')">&#8592; back</button>
+      <div class="card">
+        <div class="section-label">outcome</div>
+        <span class="badge ${OB[oc]}">${OL[oc]}</span>
+        <hr class="divider">
+        <div class="section-label">instrument</div>
+        <div class="sel-row c3" id="inst-btns">
+          ${['ES','NQ','YM'].map(i=>`<button class="sel-btn${flowState.instrument===i?' active':''}" onclick="pickSel('instrument','${i}','inst-btns')">${i}</button>`).join('')}
+        </div>
+        <div class="section-label">selection rationale</div>
+        <div class="sel-row c2" id="bias-btns">
+          <button class="sel-btn purple${flowState.bias==='Weakest'?' active':''}" onclick="pickSel('bias','Weakest','bias-btns')">Weakest</button>
+          <button class="sel-btn purple${flowState.bias==='Strongest'?' active':''}" onclick="pickSel('bias','Strongest','bias-btns')">Strongest</button>
+        </div>
+        <div class="section-label">trade date</div>
+        <input type="date" id="trade-date" value="${flowState.date||today()}">
+      </div>
+      <button class="btn btn-primary" onclick="goToQ()" style="margin-top:4px">Continue &#8594;</button>`;
+  } else if(step==='questions'){
+    const oc=getOC(),qs=OQ[oc],noTrade=flowState.outcome==='notrade';
+    c.innerHTML=`
+      <button class="back-btn" onclick="renderStep('instrument')">&#8592; back</button>
+      <div class="card" style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="badge ${OB[oc]}">${OL[oc]}</span>
+          <span class="mono" style="font-size:12px;color:var(--text2)">${flowState.instrument||'—'} &middot; ${flowState.bias||'—'}</span>
+        </div>
+      </div>
+      ${noTrade?'':
+        `<div class="card-sm"><div class="fld-label">Brief description</div>
+          <textarea id="q0" rows="2" placeholder="e.g. Long NQ at 21450, target 21510, stopped 21430">${flowState.q0||''}</textarea>
+        </div>`}
+      ${qs.map((q,i)=>`
+        <div class="card-sm">
+          <div class="q-label" style="font-size:12px;color:var(--text2);margin-bottom:6px"><span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text3);margin-right:4px">0${i+1}</span>${q}</div>
+          <textarea id="q${i+1}" rows="3" placeholder="your answer...">${flowState['q'+(i+1)]||''}</textarea>
+        </div>`).join('')}
+      <div class="card-sm"><div class="fld-label">Additional notes</div>
+        <textarea id="qnotes" rows="2" placeholder="anything else...">${flowState.qnotes||''}</textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveEntry()" style="margin-top:8px">${editingId?'Update':'Save entry'} &#8594;</button>
+      ${editingId?`<button class="btn btn-danger btn" onclick="deleteLive('${editingId}')" style="margin-top:8px;display:block;width:100%">Delete entry</button>`:''}`;
+  }
+}
+
+function pickOutcome(o){flowState.outcome=o;renderStep('process')}
+function pickProcess(p){flowState.process=p;renderStep('instrument')}
+function pickSel(key,val,rowId){
+  flowState[key]=val;
+  document.querySelectorAll('#'+rowId+' .sel-btn').forEach(b=>b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+function goToQ(){
+  if(!flowState.instrument){alert('Select instrument');return}
+  if(!flowState.bias){alert('Select weakest or strongest');return}
+  flowState.date=document.getElementById('trade-date').value;
+  renderStep('questions');
+}
+function getOC(){
+  const{outcome:o,process:p}=flowState;
+  if(o==='win'&&p==='yes')return'gw';if(o==='win'&&p==='no')return'bw';
+  if(o==='loss'&&p==='yes')return'gl';if(o==='loss'&&p==='no')return'bl';
+  if(o==='notrade'&&p==='no')return'gp';if(o==='notrade'&&p==='yes')return'bp';
+  return'gw';
+}
+function saveEntry(){
+  const oc=getOC(),qs=OQ[oc],noTrade=flowState.outcome==='notrade';
+  const answers={};
+  if(!noTrade)answers.q0=document.getElementById('q0')?.value||'';
+  qs.forEach((_,i)=>{answers['q'+(i+1)]=document.getElementById('q'+(i+1))?.value||''});
+  answers.qnotes=document.getElementById('qnotes')?.value||'';
+  const live=getLive();
+  if(editingId){
+    const i=live.findIndex(e=>e.id===editingId);
+    if(i>=0)live[i]={...live[i],answers,outcome:oc,instrument:flowState.instrument,bias:flowState.bias,date:flowState.date,questions:qs,noTrade};
+  } else {
+    live.unshift({id:uid(),ts:new Date().toISOString(),date:flowState.date,outcome:oc,instrument:flowState.instrument,bias:flowState.bias,answers,questions:qs,noTrade});
+  }
+  saveLive(live);flowState={};editingId=null;showScreen('journal');
+}
+function deleteLive(id){
+  if(!confirm('Delete?'))return;
+  saveLive(getLive().filter(e=>e.id!==id));showScreen('journal');
+}
+
+/* ═══════════════════ LIVE JOURNAL ═══════════════════ */
+function renderJournal(){
+  const entries=getLive(),el=document.getElementById('journal-list');
+  if(!entries.length){el.innerHTML='<div class="empty-state">No live entries yet.</div>';return}
+  el.innerHTML=entries.map(e=>{
+    const preview=Object.values(e.answers||{}).find(v=>v&&v.trim())||'No notes';
+    return`<div class="entry-card" onclick="showDetail('${e.id}')">
+      <div class="entry-header"><span class="entry-date mono">${e.date||e.ts?.slice(0,10)}</span><span class="entry-inst mono">${e.instrument} &middot; ${e.bias}</span></div>
+      <div class="entry-preview">${esc(preview)}</div>
+      <div class="entry-meta"><span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span></div>
+    </div>`;}).join('');
+}
+
+function showDetail(id,fromSearch){
+  const e=getLive().find(x=>x.id===id);if(!e)return;
+  const qs=e.questions||OQ[e.outcome]||[];
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span>
+    <span class="mono" style="font-size:11px;color:var(--text3)">${e.date||e.ts?.slice(0,10)}</span>
+  </div>
+  <div class="card-sm" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+    <div><div class="section-label" style="margin-bottom:2px">instrument</div><span class="mono" style="font-size:16px;font-weight:700">${e.instrument}</span></div>
+    <div style="text-align:right"><div class="section-label" style="margin-bottom:2px">selection</div><span style="font-size:13px;color:var(--purple)">${e.bias}</span></div>
+  </div>`;
+  if(!e.noTrade&&e.answers?.q0)html+=`<div style="margin-bottom:10px"><div class="section-label">description</div><div style="font-size:13px;line-height:1.6;color:var(--text2)">${esc(e.answers.q0)}</div></div><hr class="divider">`;
+  qs.forEach((q,i)=>{const a=e.answers?.['q'+(i+1)];if(a)html+=`<div style="margin-bottom:10px"><div style="font-size:12px;color:var(--text2);margin-bottom:4px"><span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text3);margin-right:4px">0${i+1}</span>${q}</div><div style="font-size:13px;line-height:1.6">${esc(a)}</div></div>`;});
+  if(e.answers?.qnotes)html+=`<hr class="divider"><div><div class="section-label">notes</div><div style="font-size:13px;line-height:1.6;color:var(--text2)">${esc(e.answers.qnotes)}</div></div>`;
+  html+=`<hr class="divider"><button class="btn btn-ghost" onclick="editLive('${e.id}')">Edit entry</button>`;
+  document.getElementById('detail-content').innerHTML=html;
+  document.getElementById('detail-back-btn').onclick=()=>showScreen(fromSearch?'search':'journal');
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+  document.getElementById('screen-detail').classList.add('active');
+}
+
+function editLive(id){
+  const e=getLive().find(x=>x.id===id);if(!e)return;
+  editingId=id;
+  const map={gw:['win','yes'],bw:['win','no'],gl:['loss','yes'],bl:['loss','no'],gp:['notrade','no'],bp:['notrade','yes']};
+  [flowState.outcome,flowState.process]=map[e.outcome]||['win','yes'];
+  flowState.instrument=e.instrument;flowState.bias=e.bias;flowState.date=e.date;
+  Object.assign(flowState,e.answers||{});
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+  document.getElementById('screen-log').classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+  renderStep('questions');
+}
+
+/* ═══════════════════ BACKTEST ═══════════════════ */
+function renderBtList(){
+  const bt=getBt(),el=document.getElementById('bt-list');
+  if(!bt.length){el.innerHTML='<div class="empty-state">No backtest entries yet.<br>Tap "+ New entry" to start logging.</div>';return}
+  el.innerHTML=bt.map(e=>`
+    <div class="entry-card" onclick="showBtDetail('${e.id}')">
+      <div class="entry-header">
+        <span class="entry-date mono">${e.date}</span>
+        <span class="entry-inst mono">${e.instrument} &middot; ${e.session}</span>
+      </div>
+      <div class="entry-preview">${esc(e.notes||'No notes')}</div>
+      <div class="entry-meta">
+        <span class="badge" style="${btOutcomeBadge(e.outcome)}">${e.outcome}</span>
+        <span class="badge badge-bt" style="margin-left:2px">${e.direction}</span>
+        ${e.screenshotRef?`<span class="mono" style="font-size:10px;color:var(--text3)">&#128247; ${esc(e.screenshotRef)}</span>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function btOutcomeBadge(o){
+  if(o==='Win')return'background:var(--green-bg);color:var(--green);border:1px solid var(--green2)';
+  if(o==='Loss')return'background:var(--red-bg);color:var(--red);border:1px solid var(--red2)';
+  return'background:var(--bg3);color:var(--text2);border:1px solid var(--border2)';
+}
+
+function showBtForm(id){
+  const bt=getBt();
+  const e=id?bt.find(x=>x.id===id):{};
+  document.getElementById('bt-list-view').style.display='none';
+  document.getElementById('bt-form-view').style.display='block';
+  document.getElementById('bt-detail-view').style.display='none';
+  const f=document.getElementById('bt-form-content');
+  f.innerHTML=`
+    <div class="section-label">${id?'Edit':'New'} backtest entry</div>
+    <div class="card">
+      <div class="fld"><div class="fld-label">Date</div><input type="date" id="bt-date" value="${e.date||today()}"></div>
+      <div class="fld"><div class="fld-label">Session</div>
+        <div class="sel-row c4" id="bt-sess">
+          ${SESSIONS.map(s=>`<button class="sel-btn blue${e.session===s?' active':''}" onclick="btSel('session','${s}','bt-sess')">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="fld"><div class="fld-label">Instrument</div>
+        <div class="sel-row c3" id="bt-inst">
+          ${['ES','NQ','YM'].map(s=>`<button class="sel-btn${e.instrument===s?' active':''}" onclick="btSel('instrument','${s}','bt-inst')">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="fld"><div class="fld-label">Direction</div>
+        <div class="sel-row c2" id="bt-dir">
+          <button class="sel-btn${e.direction==='Long'?' active':''}" style="${e.direction==='Long'?'border-color:var(--green);color:var(--green)':''}" onclick="btSel('direction','Long','bt-dir');this.style.borderColor='var(--green)';this.style.color='var(--green)'">Long &#8593;</button>
+          <button class="sel-btn${e.direction==='Short'?' active':''}" style="${e.direction==='Short'?'border-color:var(--red);color:var(--red)':''}" onclick="btSel('direction','Short','bt-dir');this.style.borderColor='var(--red)';this.style.color='var(--red)'">Short &#8595;</button>
+        </div>
+      </div>
+      <div class="fld"><div class="fld-label">Daily bias</div>
+        <div class="sel-row c3" id="bt-bias">
+          ${BIASES.map(s=>`<button class="sel-btn purple${e.dailyBias===s?' active':''}" onclick="btSel('dailyBias','${s}','bt-bias')">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="fld"><div class="fld-label">Daily profile</div>
+        <div class="sel-row" style="grid-template-columns:1fr 1fr" id="bt-prof">
+          ${PROFILES.map(s=>`<button class="sel-btn amber${e.dailyProfile===s?' active':''}" onclick="btSel('dailyProfile','${s}','bt-prof')">${s}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-label">Prices</div>
+      <div class="price-row">
+        <div><div class="fld-label">Entry</div><input type="number" id="bt-entry" step="0.25" placeholder="21450" value="${e.entryPrice||''}"></div>
+        <div><div class="fld-label">Target</div><input type="number" id="bt-target" step="0.25" placeholder="21510" value="${e.targetPrice||''}"></div>
+        <div><div class="fld-label">Stop</div><input type="number" id="bt-stop" step="0.25" placeholder="21430" value="${e.stopPrice||''}"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fld"><div class="fld-label">Outcome</div>
+        <div class="sel-row c3" id="bt-outcome">
+          ${['Win','Loss','BE'].map(s=>`<button class="sel-btn${e.outcome===s?' active':''}" style="${e.outcome===s?'border-color:var(--green);color:var(--green)':''}" onclick="btSelOutcome('${s}')">${s}</button>`).join('')}
+        </div>
+      </div>
+      <div class="fld"><div class="fld-label">Screenshot reference</div>
+        <input type="text" id="bt-screenshot" placeholder="e.g. 2025-01-15_NQ_long.png" value="${esc(e.screenshotRef||'')}">
+      </div>
+      <div class="fld"><div class="fld-label">Notes</div>
+        <textarea id="bt-notes" rows="4" placeholder="Setup description, observations, what you noticed...">${esc(e.notes||'')}</textarea>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="saveBtEntry('${id||''}')" style="margin-bottom:8px">${id?'Update':'Save'} entry &#8594;</button>
+    ${id?`<button class="btn btn-danger" onclick="deleteBt('${id}')" style="margin-bottom:8px;display:block;width:100%">Delete entry</button>`:''}`;
+  // store selections in temp object
+  window._btForm={session:e.session||'',instrument:e.instrument||'',direction:e.direction||'',dailyBias:e.dailyBias||'',dailyProfile:e.dailyProfile||'',outcome:e.outcome||''};
+}
+
+function btSel(key,val,rowId){
+  window._btForm=window._btForm||{};
+  window._btForm[key]=val;
+  document.querySelectorAll('#'+rowId+' .sel-btn').forEach(b=>{b.classList.remove('active');b.style.borderColor='';b.style.color='';});
+  event.currentTarget.classList.add('active');
+}
+function btSelOutcome(val){
+  window._btForm=window._btForm||{};window._btForm.outcome=val;
+  const colors={Win:'var(--green)',Loss:'var(--red)',BE:'var(--amber)'};
+  document.querySelectorAll('#bt-outcome .sel-btn').forEach(b=>{b.classList.remove('active');b.style.borderColor='';b.style.color='';});
+  event.currentTarget.classList.add('active');
+  event.currentTarget.style.borderColor=colors[val];event.currentTarget.style.color=colors[val];
+}
+
+function saveBtEntry(id){
+  const f=window._btForm||{};
+  if(!f.instrument){alert('Select instrument');return}
+  if(!f.session){alert('Select session');return}
+  if(!f.direction){alert('Select direction');return}
+  if(!f.outcome){alert('Select outcome');return}
+  const entry={
+    id:id||uid(),
+    date:document.getElementById('bt-date').value,
+    session:f.session,instrument:f.instrument,direction:f.direction,
+    dailyBias:f.dailyBias,dailyProfile:f.dailyProfile,
+    entryPrice:document.getElementById('bt-entry').value,
+    targetPrice:document.getElementById('bt-target').value,
+    stopPrice:document.getElementById('bt-stop').value,
+    outcome:f.outcome,
+    screenshotRef:document.getElementById('bt-screenshot').value,
+    notes:document.getElementById('bt-notes').value,
+    ts:new Date().toISOString()
+  };
+  const bt=getBt();
+  if(id){const i=bt.findIndex(e=>e.id===id);if(i>=0)bt[i]=entry;else bt.unshift(entry);}
+  else bt.unshift(entry);
+  saveBt(bt);hideBtForm();renderBtList();
+}
+
+function deleteBt(id){
+  if(!confirm('Delete?'))return;
+  saveBt(getBt().filter(e=>e.id!==id));hideBtForm();renderBtList();
+}
+
+function hideBtForm(){
+  document.getElementById('bt-list-view').style.display='block';
+  document.getElementById('bt-form-view').style.display='none';
+  document.getElementById('bt-detail-view').style.display='none';
+}
+
+function showBtDetail(id){
+  const e=getBt().find(x=>x.id===id);if(!e)return;
+  document.getElementById('bt-list-view').style.display='none';
+  document.getElementById('bt-form-view').style.display='none';
+  document.getElementById('bt-detail-view').style.display='block';
+  document.getElementById('bt-detail-back').onclick=()=>{hideBtForm();renderBtList();};
+  const rr=e.entryPrice&&e.targetPrice&&e.stopPrice?((Math.abs(e.targetPrice-e.entryPrice)/Math.abs(e.entryPrice-e.stopPrice)).toFixed(2)):'—';
+  document.getElementById('bt-detail-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="badge" style="${btOutcomeBadge(e.outcome)}">${e.outcome}</span>
+      <span class="mono" style="font-size:11px;color:var(--text3)">${e.date}</span>
+    </div>
+    <div class="card-sm" style="margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+        <div><div class="section-label" style="margin-bottom:2px">inst</div><span class="mono" style="font-size:16px;font-weight:700">${e.instrument}</span></div>
+        <div><div class="section-label" style="margin-bottom:2px">session</div><span style="font-size:12px;color:var(--blue)">${e.session}</span></div>
+        <div><div class="section-label" style="margin-bottom:2px">direction</div><span style="font-size:13px;color:${e.direction==='Long'?'var(--green)':'var(--red)'}">${e.direction} ${e.direction==='Long'?'↑':'↓'}</span></div>
+      </div>
+    </div>
+    <div class="card-sm" style="margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div class="section-label" style="margin-bottom:2px">daily bias</div><span style="font-size:13px;color:var(--purple)">${e.dailyBias||'—'}</span></div>
+        <div><div class="section-label" style="margin-bottom:2px">profile</div><span style="font-size:13px;color:var(--amber)">${e.dailyProfile||'—'}</span></div>
+      </div>
+    </div>
+    ${e.entryPrice?`<div class="card-sm" style="margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center">
+        <div><div class="section-label" style="margin-bottom:2px">entry</div><span class="mono" style="font-size:12px">${e.entryPrice}</span></div>
+        <div><div class="section-label" style="margin-bottom:2px">target</div><span class="mono" style="font-size:12px;color:var(--green)">${e.targetPrice||'—'}</span></div>
+        <div><div class="section-label" style="margin-bottom:2px">stop</div><span class="mono" style="font-size:12px;color:var(--red)">${e.stopPrice||'—'}</span></div>
+        <div><div class="section-label" style="margin-bottom:2px">R:R</div><span class="mono" style="font-size:12px;color:var(--teal)">${rr}</span></div>
+      </div>
+    </div>`:''}
+    ${e.screenshotRef?`<div style="margin-bottom:10px"><div class="section-label">screenshot ref</div><span class="mono" style="font-size:12px;color:var(--text2)">&#128247; ${esc(e.screenshotRef)}</span></div>`:''}
+    ${e.notes?`<div style="margin-bottom:12px"><div class="section-label">notes</div><div style="font-size:13px;line-height:1.7;color:var(--text)">${esc(e.notes)}</div></div>`:''}
+    <hr class="divider">
+    <button class="btn btn-ghost" onclick="showBtForm('${e.id}')">Edit entry</button>`;
+}
+
+/* ═══════════════════ SEARCH ═══════════════════ */
+let _srchMode='live';
+function setSrchMode(m){
+  _srchMode=m;
+  document.getElementById('srch-live-btn').classList.toggle('active',m==='live');
+  document.getElementById('srch-bt-btn').classList.toggle('active',m==='bt');
+  document.getElementById('live-filters').style.display=m==='live'?'block':'none';
+  document.getElementById('bt-filters').style.display=m==='bt'?'block':'none';
+  runSearch();
+}
+
+function toggleChip(btn,group){
+  const map={outcome:'outcome-filters',inst:'inst-filters','bt-outcome':'bt-outcome-filters','bt-session':'bt-session-filters'};
+  document.querySelectorAll('#'+map[group]+' .chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');srchFilters[group]=btn.dataset.val;runSearch();
+}
+
+function runSearch(){
+  const kw=(document.getElementById('kw-input')?.value||'').trim().toLowerCase();
+  const df=document.getElementById('date-from')?.value||'';
+  const dt=document.getElementById('date-to')?.value||'';
+  let entries=_srchMode==='live'?getLive():getBt();
+  if(_srchMode==='live'){
+    if(srchFilters.outcome)entries=entries.filter(e=>e.outcome===srchFilters.outcome);
+  } else {
+    if(srchFilters['bt-outcome'])entries=entries.filter(e=>e.outcome===srchFilters['bt-outcome']);
+    if(srchFilters['bt-session'])entries=entries.filter(e=>e.session===srchFilters['bt-session']);
+  }
+  if(srchFilters.inst)entries=entries.filter(e=>e.instrument===srchFilters.inst);
+  if(df)entries=entries.filter(e=>(e.date||e.ts?.slice(0,10))>=df);
+  if(dt)entries=entries.filter(e=>(e.date||e.ts?.slice(0,10))<=dt);
+  if(kw)entries=entries.filter(e=>{
+    const blob=_srchMode==='live'
+      ?[e.instrument,e.bias,OL[e.outcome],e.date,...Object.values(e.answers||{})].join(' ').toLowerCase()
+      :[e.instrument,e.session,e.direction,e.dailyBias,e.dailyProfile,e.outcome,e.notes,e.screenshotRef,e.date].join(' ').toLowerCase();
+    return blob.includes(kw);
+  });
+  document.getElementById('result-count').textContent=entries.length+' entr'+(entries.length===1?'y':'ies');
+  const el=document.getElementById('search-results');
+  if(!entries.length){el.innerHTML='<div class="empty-state">No entries match.</div>';return}
+  function hl(t){
+    if(!kw||!t)return t||'';
+    return t.replace(new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<span class="highlight">${m}</span>`);
+  }
+  if(_srchMode==='live'){
+    el.innerHTML=entries.map(e=>{
+      const allText=Object.values(e.answers||{}).filter(Boolean).join(' ');
+      let snip=allText;
+      if(kw){const i=allText.toLowerCase().indexOf(kw);if(i>=0){const s=Math.max(0,i-40);snip=allText.slice(s,s+120)+(allText.length>s+120?'..':'');}}
+      else snip=allText.slice(0,120);
+      return`<div class="entry-card" onclick="showDetail('${e.id}',true)">
+        <div class="entry-header"><span class="entry-date mono">${e.date||e.ts?.slice(0,10)}</span><span class="entry-inst mono">${e.instrument} &middot; ${e.bias}</span></div>
+        <div class="entry-preview">${hl(snip)||'No notes'}</div>
+        <div class="entry-meta"><span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span></div>
+      </div>`;}).join('');
+  } else {
+    el.innerHTML=entries.map(e=>`
+      <div class="entry-card" onclick="showBtDetailFromSearch('${e.id}')">
+        <div class="entry-header"><span class="entry-date mono">${e.date}</span><span class="entry-inst mono">${e.instrument} &middot; ${e.session}</span></div>
+        <div class="entry-preview">${hl(e.notes?.slice(0,120)||'No notes')}</div>
+        <div class="entry-meta">
+          <span class="badge" style="${btOutcomeBadge(e.outcome)}">${e.outcome}</span>
+          <span class="badge badge-bt">${e.direction}</span>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function showBtDetailFromSearch(id){
+  showScreen('backtest');
+  setTimeout(()=>showBtDetail(id),50);
+}
+
+/* ═══════════════════ STATS ═══════════════════ */
+let _statsMode='live';
+function setStatsMode(m){
+  _statsMode=m;
+  document.getElementById('stats-live-btn').classList.toggle('active',m==='live');
+  document.getElementById('stats-bt-btn').classList.toggle('active',m==='bt');
+  renderStats();
+}
+function renderStats(){
+  const el=document.getElementById('stats-content');
+  if(_statsMode==='live'){
+    const entries=getLive();
+    if(!entries.length){el.innerHTML='<div class="empty-state">No live entries yet.</div>';return}
+    const total=entries.length,cat={gw:0,bw:0,gl:0,bl:0,gp:0,bp:0},inst={ES:0,NQ:0,YM:0},bias={Weakest:0,Strongest:0};
+    entries.forEach(e=>{cat[e.outcome]=(cat[e.outcome]||0)+1;if(e.instrument)inst[e.instrument]=(inst[e.instrument]||0)+1;if(e.bias)bias[e.bias]=(bias[e.bias]||0)+1;});
+    const good=cat.gw+cat.gl+cat.gp,wins=cat.gw+cat.bw,losses=cat.gl+cat.bl;
+    const wr=wins+losses>0?Math.round(wins/(wins+losses)*100)+'%':'—';
+    const maxI=Math.max(...Object.values(inst),1);
+    el.innerHTML=`
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)">${Math.round(good/total*100)}%</div><div class="stat-lbl">good process rate</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${wr}</div><div class="stat-lbl">win rate</div></div>
+        <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">total entries</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--purple)">${cat.gp+cat.bp}</div><div class="stat-lbl">no-trade sessions</div></div>
+      </div>
+      <div class="card"><div class="section-label">outcome breakdown</div>
+        ${Object.entries(cat).map(([k,v])=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+          <span class="badge ${OB[k]}" style="min-width:74px;justify-content:center">${OL[k]}</span>
+          <div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden"><div style="height:100%;width:${total?Math.round(v/total*100):0}%;background:var(--border2);border-radius:2px"></div></div>
+          <span class="mono" style="font-size:11px;color:var(--text3);min-width:14px;text-align:right">${v}</span>
+        </div>`).join('')}
+      </div>
+      <div class="card"><div class="section-label">instrument</div>
+        ${['ES','NQ','YM'].map(i=>`<div class="bar-row"><span class="bar-label">${i}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(inst[i]/maxI*100)}%;background:var(--green2)"></div></div><span class="bar-count">${inst[i]}</span></div>`).join('')}
+        <hr class="divider"><div class="section-label">selection</div>
+        <div style="display:flex;gap:10px;margin-top:4px">
+          ${['Weakest','Strongest'].map(b=>`<div style="flex:1;text-align:center"><div class="mono" style="font-size:20px;font-weight:700;color:var(--purple)">${bias[b]||0}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">${b}</div></div>`).join('<div style="width:1px;background:var(--border)"></div>')}
+        </div>
+      </div>`;
+  } else {
+    const bt=getBt();
+    if(!bt.length){el.innerHTML='<div class="empty-state">No backtest entries yet.</div>';return}
+    const total=bt.length,oc={Win:0,Loss:0,BE:0},inst={ES:0,NQ:0,YM:0},sess={},profile={};
+    bt.forEach(e=>{
+      oc[e.outcome]=(oc[e.outcome]||0)+1;
+      if(e.instrument)inst[e.instrument]=(inst[e.instrument]||0)+1;
+      if(e.session)sess[e.session]=(sess[e.session]||0)+1;
+      if(e.dailyProfile)profile[e.dailyProfile]=(profile[e.dailyProfile]||0)+1;
+    });
+    const wr=oc.Win+oc.Loss>0?Math.round(oc.Win/(oc.Win+oc.Loss)*100)+'%':'—';
+    const maxI=Math.max(...Object.values(inst),1);
+    const maxS=Math.max(...Object.values(sess),1);
+    el.innerHTML=`
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)">${wr}</div><div class="stat-lbl">win rate</div></div>
+        <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">total trades</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)">${oc.Win}</div><div class="stat-lbl">wins</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--red)">${oc.Loss}</div><div class="stat-lbl">losses</div></div>
+      </div>
+      <div class="card"><div class="section-label">instrument</div>
+        ${['ES','NQ','YM'].map(i=>`<div class="bar-row"><span class="bar-label">${i}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(inst[i]/maxI*100)}%;background:var(--teal)"></div></div><span class="bar-count">${inst[i]}</span></div>`).join('')}
+      </div>
+      <div class="card"><div class="section-label">by session</div>
+        ${SESSIONS.map(s=>`<div class="bar-row"><span class="bar-label" style="width:48px;font-size:10px">${s}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round((sess[s]||0)/maxS*100)}%;background:var(--blue)"></div></div><span class="bar-count">${sess[s]||0}</span></div>`).join('')}
+      </div>
+      <div class="card"><div class="section-label">by daily profile</div>
+        ${PROFILES.map(p=>`<div class="bar-row"><span class="bar-label" style="width:96px;font-size:10px;overflow:hidden;white-space:nowrap">${p}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round((profile[p]||0)/Math.max(...Object.values(profile),1)*100)}%;background:var(--amber)"></div></div><span class="bar-count">${profile[p]||0}</span></div>`).join('')}
+      </div>`;
+  }
+}
+
+/* ═══════════════════ SETTINGS / DRIVE ═══════════════════ */
+let _gapi=null,_tokenClient=null,_driveFileId=null,_syncTimer=null;
+
+function renderSettings(){
+  const cid=localStorage.getItem('ej_gcid')||'';
+  if(cid){
+    document.getElementById('client-id-input').value=cid;
+    // if already configured, collapse the guide to just the input step
+    document.getElementById('drive-setup-trigger').style.display='none';
+  }
+  updateDriveUI();
+}
+
+function showSetupGuide(){
+  document.getElementById('drive-setup').style.display='block';
+  document.getElementById('drive-setup-trigger').style.display='none';
+}
+
+function saveClientId(){
+  const cid=document.getElementById('client-id-input').value.trim();
+  if(!cid){alert('Paste your Client ID');return}
+  localStorage.setItem('ej_gcid',cid);
+  initGoogleAuth(cid);
+}
+
+function initGoogleAuth(cid){
+  if(!window.google){
+    const s=document.createElement('script');
+    s.src='https://accounts.google.com/gsi/client';
+    s.onload=()=>{
+      const s2=document.createElement('script');
+      s2.src='https://apis.google.com/js/api.js';
+      s2.onload=()=>gapiLoad(cid);
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s);
+  } else gapiLoad(cid);
+}
+
+function gapiLoad(cid){
+  gapi.load('client',async()=>{
+    await gapi.client.init({discoveryDocs:['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']});
+    _tokenClient=google.accounts.oauth2.initTokenClient({
+      client_id:cid,
+      scope:'https://www.googleapis.com/auth/drive.appdata',
+      callback:async(resp)=>{
+        if(resp.error)return setSyncStatus('err','Auth failed');
+        setSyncStatus('syncing','Syncing...');
+        await loadFromDrive();
+      }
+    });
+    setSyncStatus('ok','Ready — tap to sign in');
+    document.getElementById('drive-setup').style.display='none';
+    document.getElementById('drive-connected').style.display='block';
+    document.getElementById('drive-user').textContent='Connected';
+  });
+}
+
+function syncNow(){
+  if(!_tokenClient){alert('Set up Google Drive first');return}
+  _tokenClient.requestAccessToken({prompt:''});
+}
+
+async function loadFromDrive(){
+  try{
+    const res=await gapi.client.drive.files.list({spaces:'appDataFolder',fields:'files(id,name)',q:"name='edge_journal_data.json'"});
+    const files=res.result.files;
+    if(files&&files.length){
+      _driveFileId=files[0].id;
+      const r=await gapi.client.request({path:`https://www.googleapis.com/drive/v3/files/${_driveFileId}?alt=media`});
+      const remote=typeof r.result==='string'?JSON.parse(r.result):r.result;
+      // merge: keep newest by ts
+      const local=getData();
+      const merged={live:mergeArr(local.live,remote.live||[]),bt:mergeArr(local.bt,remote.bt||[])};
+      localStorage.setItem('ej_data',JSON.stringify(merged));
+    }
+    await saveToDrive();
+    setSyncStatus('ok','Synced '+new Date().toLocaleTimeString());
+  }catch(e){setSyncStatus('err','Sync failed');}
+}
+
+function mergeArr(a,b){
+  const map=new Map();
+  [...(a||[]),...(b||[])].forEach(e=>map.set(e.id,e));
+  return Array.from(map.values()).sort((x,y)=>(y.date||y.ts||'')>(x.date||x.ts||'')?1:-1);
+}
+
+async function saveToDrive(){
+  const data=getData(),body=JSON.stringify(data);
+  if(_driveFileId){
+    await gapi.client.request({path:`https://www.googleapis.com/upload/drive/v3/files/${_driveFileId}?uploadType=media`,method:'PATCH',headers:{'Content-Type':'application/json'},body});
+  } else {
+    const meta=await gapi.client.drive.files.create({resource:{name:'edge_journal_data.json',parents:['appDataFolder']},fields:'id'});
+    _driveFileId=meta.result.id;
+    await gapi.client.request({path:`https://www.googleapis.com/upload/drive/v3/files/${_driveFileId}?uploadType=media`,method:'PATCH',headers:{'Content-Type':'application/json'},body});
+  }
+}
+
+function scheduleDriveSync(){
+  if(!_tokenClient||!gapi?.client?.drive)return;
+  clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(async()=>{
+    setSyncStatus('syncing','Saving...');
+    try{await saveToDrive();setSyncStatus('ok','Saved '+new Date().toLocaleTimeString());}
+    catch{setSyncStatus('err','Save failed');}
+  },2000);
+}
+
+function setSyncStatus(state,label){
+  const btn=document.getElementById('sync-btn');
+  const dot=document.querySelector('.nav-sync .dot');
+  const lbl=document.getElementById('sync-label');
+  btn.className='nav-sync '+(state==='ok'?'ok':state==='err'?'err':state==='syncing'?'syncing':'');
+  lbl.textContent=label;
+  const driveDot=document.getElementById('drive-dot');
+  if(driveDot)driveDot.style.background=state==='ok'?'var(--green)':state==='err'?'var(--red)':'var(--amber)';
+  const dst=document.getElementById('drive-status-text');
+  if(dst)dst.textContent=label;
+}
+
+function driveSignOut(){
+  google?.accounts?.oauth2?.revoke(gapi?.client?.getToken()?.access_token,()=>{});
+  gapi?.client?.setToken(null);
+  _driveFileId=null;_tokenClient=null;
+  setSyncStatus('','Not connected');
+  document.getElementById('drive-setup').style.display='block';
+  document.getElementById('drive-connected').style.display='none';
+}
+
+function updateDriveUI(){
+  const cid=localStorage.getItem('ej_gcid');
+  if(cid)document.getElementById('drive-setup').style.display='none';
+}
+
+/* ═══════════════════ IMPORT / EXPORT ═══════════════════ */
+function exportData(){
+  const d=getData(),blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='edge_journal_backup_'+today()+'.json';a.click();
+}
+function importData(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.live||d.bt){localStorage.setItem('ej_data',JSON.stringify(d));alert('Imported successfully.');renderJournal();}else alert('Invalid file format.');}catch{alert('Could not parse file.');}};
+  r.readAsText(f);
+}
+
+/* ═══════════════════ UTILS ═══════════════════ */
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function today(){return new Date().toISOString().slice(0,10)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ═══════════════════ THEME ═══════════════════
+function applyTheme(dark){
+  document.body.classList.toggle('dark',dark);
+  const btn=document.getElementById('theme-btn');
+  if(btn)btn.innerHTML=dark?'&#9790; Dark':'&#9788; Light';
+}
+function toggleTheme(){
+  const dark=!document.body.classList.contains('dark');
+  localStorage.setItem('ej_theme',dark?'dark':'light');
+  applyTheme(dark);
+}
+// init theme — default light
+applyTheme(localStorage.getItem('ej_theme')==='dark');
+
+// auto-init Drive if already configured
+const _savedCid=localStorage.getItem('ej_gcid');
+if(_savedCid)setTimeout(()=>initGoogleAuth(_savedCid),500);
+
+startFlow();
+</script>
+</body>
+</html>
