@@ -125,6 +125,38 @@ select option{background:var(--bg3)}
 .search-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
 .highlight{background:rgba(0,212,160,.15);color:var(--green);border-radius:2px}
 .result-count{font-family:'Courier New',monospace;font-size:11px;color:var(--text3);margin-bottom:9px}
+/* tags */
+.tag-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:24px}
+.tag{display:inline-flex;align-items:center;gap:4px;background:var(--purple-bg);border:1px solid var(--purple);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--purple)}
+.tag .tag-x{cursor:pointer;opacity:.6;font-size:14px;line-height:1;margin-left:1px}
+.tag .tag-x:hover{opacity:1}
+.tag-input-row{display:flex;gap:6px;margin-bottom:6px}
+.tag-input-row input{flex:1;font-size:12px;padding:7px 10px}
+.tag-input-row button{background:var(--purple);border:none;color:#fff;border-radius:var(--r);padding:0 12px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap}
+.tag-sug{display:inline-block;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--text2);cursor:pointer;margin:0 3px 3px 0}
+.tag-sug:hover{border-color:var(--purple);color:var(--purple)}
+/* model selector buttons */
+.msel-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:8px 6px;font-size:11px;color:var(--text2);cursor:pointer;text-align:center;font-family:inherit;transition:all .12s;width:100%}
+.msel-active{background:var(--bg4);border-color:var(--green);color:var(--green)}
+.msel-purple{border-color:var(--purple)!important;color:var(--purple)!important}
+.msel-amber{border-color:var(--amber)!important;color:var(--amber)!important}
+.msel-blue{border-color:var(--blue)!important;color:var(--blue)!important}
+/* streak */
+.streak-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:16px}
+.streak-num{font-family:'Courier New',monospace;font-size:48px;font-weight:700;line-height:1;color:var(--green)}
+.streak-num.zero{color:var(--text3)}
+.streak-info{flex:1}
+.streak-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.streak-sub{font-size:11px;color:var(--text3);line-height:1.5}
+.streak-dots{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.streak-dot{width:10px;height:10px;border-radius:50%}
+/* prop account */
+.prop-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:13px;margin-bottom:8px}
+.prop-bar-track{height:7px;background:var(--bg4);border-radius:4px;overflow:hidden;margin:6px 0}
+.prop-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+/* plan card */
+.plan-banner{background:var(--blue-bg);border:1px solid var(--blue);border-radius:var(--r2);padding:14px;margin-bottom:12px}
+.plan-banner-tag{display:inline-block;font-family:'Courier New',monospace;font-size:10px;padding:2px 8px;border-radius:3px;background:var(--blue);color:#fff;margin-bottom:8px;letter-spacing:.05em}
 .date-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
 .date-row input{font-size:12px;padding:7px 9px}
 /* drive panel */
@@ -155,17 +187,44 @@ select option{background:var(--bg3)}
     </div>
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showScreen('log')">Log</button>
+    <button class="nav-tab active" onclick="showScreen('home')">Home</button>
+    <button class="nav-tab" onclick="showScreen('log')">Log</button>
+    <button class="nav-tab" onclick="showScreen('plan')">Plan</button>
     <button class="nav-tab" onclick="showScreen('backtest')">Backtest</button>
     <button class="nav-tab" onclick="showScreen('journal')">Journal</button>
     <button class="nav-tab" onclick="showScreen('search')">Search</button>
-    <button class="nav-tab" onclick="showScreen('stats')">Stats</button>
+    <button class="nav-tab" onclick="showScreen('review')">Review</button>
+    <button class="nav-tab" onclick="showScreen('stats')">Perf.</button>
     <button class="nav-tab" onclick="showScreen('settings')">⚙</button>
   </div>
 </nav>
 
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div id="home-content" style="padding:4px 0"></div>
+</div>
+
+<!-- PLAN -->
+<div id="screen-plan" class="screen">
+  <div id="plan-list-view">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="section-label" style="margin:0">Pre-market plans</span>
+      <button class="btn btn-primary" style="width:auto;padding:7px 14px;font-size:12px" onclick="showPlanForm()">+ New plan</button>
+    </div>
+    <div id="plan-list"></div>
+  </div>
+  <div id="plan-form-view" style="display:none">
+    <button class="back-btn" onclick="hidePlanForm()">&#8592; back</button>
+    <div id="plan-form-content"></div>
+  </div>
+  <div id="plan-detail-view" style="display:none">
+    <button class="back-btn" id="plan-detail-back">&#8592; back</button>
+    <div id="plan-detail-content"></div>
+  </div>
+</div>
+
 <!-- LOG -->
-<div id="screen-log" class="screen active"><div id="flow-container"></div></div>
+<div id="screen-log" class="screen"><div id="flow-container"></div></div>
 
 <!-- BACKTEST -->
 <div id="screen-backtest" class="screen">
@@ -188,7 +247,14 @@ select option{background:var(--bg3)}
 
 <!-- JOURNAL -->
 <div id="screen-journal" class="screen">
-  <div class="section-label">Live trade log</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <span class="section-label" style="margin:0">Live trade log</span>
+    <div style="display:flex;gap:4px">
+      <button id="sort-date-btn" onclick="setJournalSort('date')" style="background:var(--bg3);border:1px solid var(--green);border-radius:var(--r);padding:4px 9px;font-size:11px;color:var(--green);cursor:pointer;font-family:inherit">Date</button>
+      <button id="sort-r-btn" onclick="setJournalSort('r')" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:4px 9px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit">Best R</button>
+      <button id="sort-worst-btn" onclick="setJournalSort('worst')" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:4px 9px;font-size:11px;color:var(--text2);cursor:pointer;font-family:inherit">Worst R</button>
+    </div>
+  </div>
   <div id="journal-list"></div>
 </div>
 
@@ -221,6 +287,12 @@ select option{background:var(--bg3)}
       <button class="chip" data-val="bp" onclick="toggleChip(this,'outcome')">bad pass</button>
     </div>
   </div>
+  <div id="live-tag-filters">
+    <div class="section-label">Tag</div>
+    <div class="filter-row" id="tag-filters">
+      <button class="chip active" data-val="" onclick="setTagChip(this)">All</button>
+    </div>
+  </div>
   <div id="bt-filters" style="display:none">
     <div class="section-label">Outcome</div>
     <div class="filter-row" id="bt-outcome-filters">
@@ -234,16 +306,13 @@ select option{background:var(--bg3)}
       <button class="chip active" data-val="" onclick="toggleChip(this,'bt-session')">All</button>
       <button class="chip" data-val="London" onclick="toggleChip(this,'bt-session')">London</button>
       <button class="chip" data-val="NY AM" onclick="toggleChip(this,'bt-session')">NY AM</button>
-      <button class="chip" data-val="NY PM" onclick="toggleChip(this,'bt-session')">NY PM</button>
-      <button class="chip" data-val="Asia" onclick="toggleChip(this,'bt-session')">Asia</button>
     </div>
   </div>
   <div class="section-label">Instrument</div>
   <div class="filter-row" id="inst-filters">
     <button class="chip inst active" data-val="" onclick="toggleChip(this,'inst')">All</button>
-    <button class="chip inst" data-val="ES" onclick="toggleChip(this,'inst')">ES</button>
-    <button class="chip inst" data-val="NQ" onclick="toggleChip(this,'inst')">NQ</button>
-    <button class="chip inst" data-val="YM" onclick="toggleChip(this,'inst')">YM</button>
+    <button class="chip inst" data-val="MNQ" onclick="toggleChip(this,'inst')">MNQ</button>
+    <button class="chip inst" data-val="MES" onclick="toggleChip(this,'inst')">MES</button>
   </div>
   <div class="section-label">Date range</div>
   <div class="date-row">
@@ -252,6 +321,18 @@ select option{background:var(--bg3)}
   </div>
   <div id="result-count" class="result-count"></div>
   <div id="search-results"></div>
+</div>
+
+<!-- REVIEW -->
+<div id="screen-review" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <span class="section-label" style="margin:0">Review</span>
+    <div style="display:flex;gap:4px">
+      <button id="rev-week-btn" onclick="setRevMode('week')" style="background:var(--bg3);border:1px solid var(--green);color:var(--green);font-size:11px;padding:4px 10px;border-radius:var(--r);cursor:pointer;font-family:inherit">Weekly</button>
+      <button id="rev-month-btn" onclick="setRevMode('month')" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:4px 10px;border-radius:var(--r);cursor:pointer;font-family:inherit">Monthly</button>
+    </div>
+  </div>
+  <div id="review-content"></div>
 </div>
 
 <!-- STATS -->
@@ -421,6 +502,13 @@ select option{background:var(--bg3)}
     </div>
   </div>
 
+  <!-- ── PROP ACCOUNTS ── -->
+  <div class="section-label">Prop firm accounts</div>
+  <div class="card" style="margin-bottom:14px">
+    <div id="prop-accounts-list"></div>
+    <button class="btn btn-ghost" style="font-size:12px;padding:9px;margin-top:4px" onclick="addPropAccount()">+ Add account</button>
+  </div>
+
   <!-- ── DATA ── -->
   <div class="section-label">Data backup</div>
   <div class="card">
@@ -450,16 +538,46 @@ const OQ={
   gp:['What conditions were missing that prevented a valid setup?','What reinforced your confidence to remain inactive today?','Did avoiding unnecessary risk protect your mental clarity or capital?'],
   bp:['What specifically caused you to miss the valid opportunity?','Was the setup identified in real time or only recognized afterward?','What process improvement would have allowed execution?']
 };
-const SESSIONS=['London','NY AM','NY PM','Asia'];
-const PROFILES=['Trend','Reversal','Range','Breakout','Failed Breakout','Gap Fill','Other'];
+const SESSIONS=['London','NY AM'];
 const BIASES=['Bullish','Bearish','Neutral'];
+const DAY_TYPES=['Reversal','Continuation','Invalidation Flip','Range External'];
+const PROFILES=['18:00 Reversal','01:00 Reversal','08:00 Reversal','Invalidation Profile','Range Day'];
+const FW_QUALITY=['1 — Clear','2 — Okay','3 — Forced'];
+const DIVERGENCE=['MNQ Stronger','MES Stronger','Both Aligned','No Divergence'];
+const MGMT=['Held 2R','Cut Early','Ran to Draw','Stopped Out'];
+let flowState={},editingId=null,_entryTags=[],_srchTag='';
 
-let flowState={},editingId=null,srchMode='live',statsMode='live',srchFilters={outcome:'',inst:'',bias:'',btOutcome:'',btSession:''};
-
-function getData(){try{return JSON.parse(localStorage.getItem('ej_data')||'{"live":[],"bt":[]}')}catch{return{live:[],bt:[]}}}
+function getData(){try{return JSON.parse(localStorage.getItem('ej_data')||'{"live":[],"bt":[],"plans":[],"props":[]}')}catch{return{live:[],bt:[],plans:[],props:[]}}}
 function saveData(d){localStorage.setItem('ej_data',JSON.stringify(d));scheduleDriveSync()}
 function getLive(){return getData().live}
 function getBt(){return getData().bt}
+function getAllTags(){try{return JSON.parse(localStorage.getItem('ej_tags')||'[]')}catch{return[]}}
+function addTagToLib(t){const lib=getAllTags();if(!lib.includes(t)){lib.push(t);localStorage.setItem('ej_tags',JSON.stringify(lib))}}
+function renderTagPills(tags,removable,ctx){
+  const fn=ctx==='bt'?'removeBtTag':'removeTag';
+  return(tags||[]).map(t=>`<span class="tag">${esc(t)}${removable?`<span class="tag-x" onclick="${fn}('${esc(t)}')">&#215;</span>`:''}</span>`).join('');
+}
+function removeBtTag(t){
+  window._btTags=(window._btTags||[]).filter(x=>x!==t);
+  const el=document.getElementById('bt-tag-wrap');
+  if(el)el.innerHTML=renderTagPills(window._btTags,true,'bt');
+}
+function addBtTag(){
+  const inp=document.getElementById('bt-tag-input');if(!inp)return;
+  const val=inp.value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+  if(!val||(window._btTags||[]).includes(val))return;
+  window._btTags=window._btTags||[];
+  window._btTags.push(val);addTagToLib(val);inp.value='';
+  const el=document.getElementById('bt-tag-wrap');
+  if(el)el.innerHTML=renderTagPills(window._btTags,true,'bt');
+}
+function addBtTagFromSug(t){
+  window._btTags=window._btTags||[];
+  if(window._btTags.includes(t))return;
+  window._btTags.push(t);
+  const el=document.getElementById('bt-tag-wrap');
+  if(el)el.innerHTML=renderTagPills(window._btTags,true,'bt');
+}
 function saveLive(arr){const d=getData();d.live=arr;saveData(d)}
 function saveBt(arr){const d=getData();d.bt=arr;saveData(d)}
 
@@ -468,18 +586,21 @@ function showScreen(s){
   document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active'));
   document.getElementById('screen-'+s).classList.add('active');
-  const tabs=['log','backtest','journal','search','stats','settings'];
+  const tabs=['home','log','plan','backtest','journal','search','review','stats','settings'];
   const i=tabs.indexOf(s);if(i>=0)document.querySelectorAll('.nav-tab')[i].classList.add('active');
   if(s==='journal')renderJournal();
   if(s==='backtest')renderBtList();
   if(s==='stats')renderStats();
-  if(s==='search')runSearch();
+  if(s==='search'){buildTagChips();runSearch();}
+  if(s==='home')renderHome();
+  if(s==='review')renderReview();
+  if(s==='plan')renderPlanList();
   if(s==='log'&&!editingId)startFlow();
   if(s==='settings')renderSettings();
 }
 
 /* ═══════════════════ FLOWCHART ═══════════════════ */
-function startFlow(){flowState={};editingId=null;renderStep('outcome')}
+function startFlow(){flowState={};editingId=null;_entryTags=[];renderStep('outcome')}
 
 function renderStep(step){
   const c=document.getElementById('flow-container');
@@ -516,7 +637,7 @@ function renderStep(step){
         <hr class="divider">
         <div class="section-label">instrument</div>
         <div class="sel-row c3" id="inst-btns">
-          ${['ES','NQ','YM'].map(i=>`<button class="sel-btn${flowState.instrument===i?' active':''}" onclick="pickSel('instrument','${i}','inst-btns')">${i}</button>`).join('')}
+          ${['MNQ','MES'].map(i=>`<button class="sel-btn${flowState.instrument===i?' active':''}" onclick="pickSel('instrument','${i}','inst-btns')">${i}</button>`).join('')}
         </div>
         <div class="section-label">selection rationale</div>
         <div class="sel-row c2" id="bias-btns">
@@ -524,9 +645,12 @@ function renderStep(step){
           <button class="sel-btn purple${flowState.bias==='Strongest'?' active':''}" onclick="pickSel('bias','Strongest','bias-btns')">Strongest</button>
         </div>
         <div class="section-label">trade date</div>
-        <input type="date" id="trade-date" value="${flowState.date||today()}">
+        <input type="date" id="trade-date" value="${flowState.date||today()}" onchange="checkPlanForDate(this.value)">
+        <div id="plan-indicator" style="margin-top:6px;font-size:11px"></div>
       </div>
+      ${(()=>{const p=getPlans().find(x=>x.date===(document.getElementById('trade-date')?document.getElementById('trade-date').value:today()));return p?`<div style="background:var(--blue-bg);border:1px solid var(--blue);border-radius:var(--r);padding:9px 12px;margin-bottom:8px;font-size:12px;color:var(--blue)">&#10003; Plan found for today &middot; ${esc(p.biasDir||'')} ${p.profileExpect?'&middot; '+esc(p.profileExpect):''}</div>`:''})()}
       <button class="btn btn-primary" onclick="goToQ()" style="margin-top:4px">Continue &#8594;</button>`;
+    setTimeout(()=>checkPlanForDate(document.getElementById('trade-date')?.value||today()),50);
   } else if(step==='questions'){
     const oc=getOC(),qs=OQ[oc],noTrade=flowState.outcome==='notrade';
     c.innerHTML=`
@@ -539,7 +663,7 @@ function renderStep(step){
       </div>
       ${noTrade?'':
         `<div class="card-sm"><div class="fld-label">Brief description</div>
-          <textarea id="q0" rows="2" placeholder="e.g. Long NQ at 21450, target 21510, stopped 21430">${flowState.q0||''}</textarea>
+          <textarea id="q0" rows="2" placeholder="e.g. Long MNQ at 21450, target 21510, stopped 21430">${flowState.q0||''}</textarea>
         </div>`}
       ${qs.map((q,i)=>`
         <div class="card-sm">
@@ -549,6 +673,47 @@ function renderStep(step){
       <div class="card-sm"><div class="fld-label">Additional notes</div>
         <textarea id="qnotes" rows="2" placeholder="anything else...">${flowState.qnotes||''}</textarea>
       </div>
+      <div class="card" style="margin-top:4px">
+        <div class="fld-label" style="margin-bottom:8px">Tags</div>
+        <div class="tag-wrap" id="tag-wrap">${renderTagPills(_entryTags,true)}</div>
+        <div class="tag-input-row">
+          <input type="text" id="tag-input" placeholder="add tag... e.g. london-reversal" onkeydown="if(event.key==='Enter'){event.preventDefault();addTag()}">
+          <button onclick="addTag()">Add</button>
+        </div>
+        <div id="tag-suggestions" style="margin-top:4px">${getAllTags().filter(t=>!_entryTags.includes(t)).map(t=>`<span class="tag-sug" onclick="addTagFromSug('${esc(t)}')">${esc(t)}</span>`).join('')}</div>
+      </div>
+      ${noTrade?'':
+        `<div class="card" style="margin-top:4px">
+          <div class="fld-label" style="margin-bottom:8px">R result</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+            ${['-1','+0.5','+1','+1.5','+2','+2.5','+3','0'].map(r=>`<button onclick="setR('${r}')" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:6px 10px;font-family:'Courier New',monospace;font-size:12px;cursor:pointer;color:${r.startsWith('-')?'var(--red)':r==='0'?'var(--text2)':'var(--green)'};">${r}R</button>`).join('')}
+          </div>
+          <input type="number" id="r-result" step="0.25" placeholder="custom value e.g. 3.5" value="${flowState.rResult||''}" style="font-family:'Courier New',monospace">
+        </div>`}
+      ${noTrade?'':
+        `<div class="card" style="margin-top:4px">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">Model details</div>
+          <div class="fld-label" style="margin-bottom:6px">Day type</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px" id="dt-btns">
+            ${DAY_TYPES.map(v=>`<button class="msel-btn${flowState.dayType===v?' msel-active':''}" data-group="dayType" data-val="${v}" onclick="mSel(this,'dayType')">${v}</button>`).join('')}
+          </div>
+          <div class="fld-label" style="margin-bottom:6px">Profile confirmed</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px" id="prof-btns">
+            ${PROFILES.map(v=>`<button class="msel-btn${flowState.profileConfirmed===v?' msel-active msel-purple':''}" data-group="profileConfirmed" data-val="${v}" onclick="mSel(this,'profileConfirmed')">${v}</button>`).join('')}
+          </div>
+          <div class="fld-label" style="margin-bottom:6px">Framework quality</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px" id="fwq-btns">
+            ${FW_QUALITY.map(v=>`<button class="msel-btn${flowState.fwQuality===v?' msel-active msel-amber':''}" data-group="fwQuality" data-val="${v}" onclick="mSel(this,'fwQuality')">${v}</button>`).join('')}
+          </div>
+          <div class="fld-label" style="margin-bottom:6px">Pair divergence at entry</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px" id="div-btns">
+            ${DIVERGENCE.map(v=>`<button class="msel-btn${flowState.pairDiv===v?' msel-active msel-blue':''}" data-group="pairDiv" data-val="${v}" onclick="mSel(this,'pairDiv')">${v}</button>`).join('')}
+          </div>
+          <div class="fld-label" style="margin-bottom:6px">Management grade</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="mgmt-btns">
+            ${MGMT.map(v=>`<button class="msel-btn${flowState.mgmtGrade===v?' msel-active':''}" data-group="mgmtGrade" data-val="${v}" onclick="mSel(this,'mgmtGrade')">${v}</button>`).join('')}
+          </div>
+        </div>`}
       <button class="btn btn-primary" onclick="saveEntry()" style="margin-top:8px">${editingId?'Update':'Save entry'} &#8594;</button>
       ${editingId?`<button class="btn btn-danger btn" onclick="deleteLive('${editingId}')" style="margin-top:8px;display:block;width:100%">Delete entry</button>`:''}`;
   }
@@ -556,6 +721,51 @@ function renderStep(step){
 
 function pickOutcome(o){flowState.outcome=o;renderStep('process')}
 function pickProcess(p){flowState.process=p;renderStep('instrument')}
+function checkPlanForDate(d){
+  const el=document.getElementById('plan-indicator');if(!el)return;
+  const plan=getPlans().find(p=>p.date===d);
+  if(plan){
+    el.innerHTML=`<span style="color:var(--green)">&#10003; Plan found for this day — ${esc(plan.biasDir||'')} ${plan.profileExpect?'&middot; '+plan.profileExpect:''}</span>`;
+  } else {
+    el.innerHTML=`<span style="color:var(--text3)">No plan for this date</span>`;
+  }
+}
+function setR(val){
+  const inp=document.getElementById('r-result');
+  if(inp)inp.value=val;
+}
+function mSel(btn,key){
+  const val=btn.dataset.val;
+  flowState[key]=val;
+  // deactivate siblings in same group
+  btn.closest('[id$="-btns"]').querySelectorAll('.msel-btn').forEach(b=>{
+    b.classList.remove('msel-active','msel-purple','msel-amber','msel-blue');
+  });
+  btn.classList.add('msel-active');
+  // add colour class by key
+  const colMap={profileConfirmed:'msel-purple',fwQuality:'msel-amber',pairDiv:'msel-blue'};
+  if(colMap[key])btn.classList.add(colMap[key]);
+}
+function addTag(){
+  const inp=document.getElementById('tag-input');if(!inp)return;
+  const val=inp.value.trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+  if(!val||_entryTags.includes(val))return;
+  _entryTags.push(val);addTagToLib(val);inp.value='';
+  refreshTagUI();
+}
+function addTagFromSug(t){
+  if(_entryTags.includes(t))return;
+  _entryTags.push(t);refreshTagUI();
+}
+function removeTag(t){
+  _entryTags=_entryTags.filter(x=>x!==t);refreshTagUI();
+}
+function refreshTagUI(){
+  const wrap=document.getElementById('tag-wrap');
+  const sugs=document.getElementById('tag-suggestions');
+  if(wrap)wrap.innerHTML=renderTagPills(_entryTags,true);
+  if(sugs)sugs.innerHTML=getAllTags().filter(t=>!_entryTags.includes(t)).map(t=>`<span class="tag-sug" onclick="addTagFromSug('${esc(t)}')">${esc(t)}</span>`).join('');
+}
 function pickSel(key,val,rowId){
   flowState[key]=val;
   document.querySelectorAll('#'+rowId+' .sel-btn').forEach(b=>b.classList.remove('active'));
@@ -586,12 +796,21 @@ function saveEntry(){
   if(!noTrade)answers.q0=document.getElementById('q0')?.value||'';
   qs.forEach((_,i)=>{answers['q'+(i+1)]=document.getElementById('q'+(i+1))?.value||''});
   answers.qnotes=document.getElementById('qnotes')?.value||'';
+  const rResult=noTrade?'':( document.getElementById('r-result')?.value||'');
   const live=getLive();
+  const entry={id:editingId||uid(),ts:new Date().toISOString(),date:flowState.date,
+    outcome:oc,instrument:flowState.instrument,bias:flowState.bias,
+    answers,questions:qs,noTrade,rResult,tags:[..._entryTags],
+    dayType:flowState.dayType||'',
+    profileConfirmed:flowState.profileConfirmed||'',
+    fwQuality:flowState.fwQuality||'',
+    pairDiv:flowState.pairDiv||'',
+    mgmtGrade:flowState.mgmtGrade||''};
   if(editingId){
     const i=live.findIndex(e=>e.id===editingId);
-    if(i>=0)live[i]={...live[i],answers,outcome:oc,instrument:flowState.instrument,bias:flowState.bias,date:flowState.date,questions:qs,noTrade};
+    if(i>=0)live[i]=entry;
   } else {
-    live.unshift({id:uid(),ts:new Date().toISOString(),date:flowState.date,outcome:oc,instrument:flowState.instrument,bias:flowState.bias,answers,questions:qs,noTrade});
+    live.unshift(entry);
   }
   saveLive(live);flowState={};editingId=null;showScreen('journal');
 }
@@ -600,36 +819,440 @@ function deleteLive(id){
   saveLive(getLive().filter(e=>e.id!==id));showScreen('journal');
 }
 
+/* ═══════════════════ HOME ═══════════════════ */
+function calcStreak(live){
+  if(!live||!live.length)return{streak:0,dots:[]};
+  // group by date
+  const byDate={};
+  live.forEach(e=>{
+    const d=e.date||e.ts?.slice(0,10);
+    if(d){if(!byDate[d])byDate[d]=[];byDate[d].push(e);}
+  });
+  const dates=Object.keys(byDate).sort().reverse();
+  let streak=0;
+  const dots=[];
+  for(const d of dates){
+    const trades=byDate[d];
+    const allGood=trades.every(e=>['gw','gl','gp'].includes(e.outcome));
+    dots.push(allGood?'good':'bad');
+    if(allGood)streak++;
+    else break;
+  }
+  return{streak,dots:dots.slice(0,14).reverse()};
+}
+
+function renderHome(){
+  const el=document.getElementById('home-content');
+  if(!el)return;
+  const live=getLive();
+  const{streak,dots}=calcStreak(live);
+  const dotColors={good:'var(--green)',bad:'var(--red)'};
+
+  // streak message
+  let streakMsg='';
+  if(streak===0)streakMsg='No process streak yet — log your first trade.';
+  else if(streak===1)streakMsg='Good start. Keep the process clean today.';
+  else if(streak<5)streakMsg=`${streak} days of clean process. Stay focused.`;
+  else if(streak<10)streakMsg=`${streak} days. Strong consistency — protect it.`;
+  else streakMsg=`${streak} days. Exceptional discipline.`;
+
+  // last 5 trades for quick summary
+  const recent=live.slice(0,5);
+  const recentHtml=recent.length?`
+    <div class="section-label" style="margin-bottom:8px">Recent entries</div>
+    ${recent.map(e=>{
+      const r=e.rResult!==undefined&&e.rResult!==''?parseFloat(e.rResult):null;
+      const rStr=r!==null?`<span class="mono" style="font-size:12px;font-weight:700;color:${r>0?'var(--green)':r<0?'var(--red)':'var(--text2)'}">${r>0?'+':''}${r}R</span>`:'';
+      return`<div class="entry-card" style="margin-bottom:7px" onclick="showDetail('${e.id}','home')">
+        <div class="entry-header">
+          <span class="entry-date mono">${e.date||e.ts?.slice(0,10)}</span>
+          <span class="entry-inst mono">${e.instrument||''} ${e.bias?'&middot; '+e.bias:''}</span>
+        </div>
+        <div class="entry-meta">
+          <span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span>
+          ${rStr}
+          ${(e.tags||[]).slice(0,2).map(t=>`<span style="font-size:10px;color:var(--purple);background:var(--purple-bg);padding:1px 6px;border-radius:10px;border:1px solid var(--purple)">${esc(t)}</span>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}`:(`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;margin-bottom:10px">
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px;text-align:center">Welcome to Edge Journal</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.9;margin-bottom:14px">
+        Built around your AM Trades expansion model. Here is how the daily loop works:
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg3);border-radius:var(--r)">
+          <span style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue);padding:2px 7px;border-radius:3px;flex-shrink:0">01</span>
+          <div>
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">Plan — the evening before</div>
+            <div style="font-size:11px;color:var(--text2)">Read the daily chart. Identify the bias, relevant swings, invalidation point and expected profile. Write your initial plan and secondary plan.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg3);border-radius:var(--r)">
+          <span style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;color:var(--green);background:var(--green-bg);border:1px solid var(--green2);padding:2px 7px;border-radius:3px;flex-shrink:0">02</span>
+          <div>
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">Execute — during the session</div>
+            <div style="font-size:11px;color:var(--text2)">Trade the model. London or NY AM only. MNQ or MES — the weaker or stronger of the two. Entry on closure through opposing candles.</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg3);border-radius:var(--r)">
+          <span style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;color:var(--purple);background:var(--purple-bg);border:1px solid var(--purple);padding:2px 7px;border-radius:3px;flex-shrink:0">03</span>
+          <div>
+            <div style="font-size:12px;font-weight:600;margin-bottom:2px">Review — end of session</div>
+            <div style="font-size:11px;color:var(--text2)">Log every trade and every missed trade through the flowchart. Process quality — not P&L — is what you are grading.</div>
+          </div>
+        </div>
+      </div>
+      <button onclick="showScreen('plan');setTimeout(showPlanForm,50)" style="width:100%;background:var(--green);border:none;color:#000;font-size:13px;font-weight:600;padding:11px;border-radius:var(--r);cursor:pointer;font-family:inherit">Start with tonight's plan &#8594;</button>
+    </div>`);
+
+  // today's plan
+  const todayStr=today();
+  const todayPlan=getPlans().find(p=>p.date===todayStr);
+
+  let planHtml='';
+  if(todayPlan){
+    const invColor=todayPlan.invRespected==='yes'?'var(--green)':todayPlan.invRespected==='no'?'var(--red)':'var(--text3)';
+    const invLabel=todayPlan.invRespected==='yes'?'&#10003; Inv. respected':todayPlan.invRespected==='no'?'&#10005; Inv. broken':'';
+    planHtml=`
+      <div style="background:var(--blue-bg);border:1px solid var(--blue);border-radius:var(--r2);padding:14px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <span style="font-family:'Courier New',monospace;font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:3px;letter-spacing:.05em">TODAY'S PLAN</span>
+          <span class="mono" style="font-size:11px;color:var(--text3)">${todayPlan.date}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;align-items:center">
+          ${todayPlan.biasDir?`<span style="font-size:13px;font-weight:700;color:var(--text)">${todayPlan.biasDir}</span>`:''}
+          ${todayPlan.biasType?`<span style="font-size:11px;color:var(--blue);background:var(--bg2);padding:2px 8px;border-radius:10px;border:1px solid var(--border)">${todayPlan.biasType}</span>`:''}
+          ${todayPlan.profileExpect?`<span style="font-size:11px;color:var(--purple);background:var(--bg2);padding:2px 8px;border-radius:10px;border:1px solid var(--border)">${todayPlan.profileExpect}</span>`:''}
+          ${todayPlan.instFocus?`<span style="font-size:11px;color:var(--text2);background:var(--bg2);padding:2px 8px;border-radius:10px;border:1px solid var(--border)">${todayPlan.instFocus}</span>`:''}
+        </div>
+        ${todayPlan.invPoint?`<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Invalidation: <span class="mono" style="color:var(--text)">${todayPlan.invPoint}</span>${todayPlan.drawOnPrice?' &middot; Draw: '+esc(todayPlan.drawOnPrice):''}</div>`:''}
+        ${todayPlan.initialPlan?`<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;padding:8px 10px;background:var(--bg2);border-radius:var(--r)">${esc(todayPlan.initialPlan.slice(0,200))}${todayPlan.initialPlan.length>200?'…':''}</div>`:''}
+        ${todayPlan.newsAt830==='Yes'?`<div style="font-size:11px;color:var(--amber);margin-bottom:6px">&#9888; 8:30 news event today</div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          ${invLabel?`<span style="font-size:11px;color:${invColor}">${invLabel}</span>`:'<span></span>'}
+          <button onclick="showScreen('plan');setTimeout(()=>showPlanDetail('${todayPlan.id}'),50)" style="background:none;border:none;color:var(--blue);font-size:12px;cursor:pointer;font-family:inherit;padding:0">View full plan &#8594;</button>
+        </div>
+      </div>`;
+  } else {
+    planHtml=`
+      <div style="background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--r2);padding:12px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;color:var(--text3)">No plan for today</span>
+        <button onclick="showScreen('plan');setTimeout(showPlanForm,50)" style="background:var(--green);border:none;color:#000;font-size:11px;font-weight:600;padding:5px 12px;border-radius:var(--r);cursor:pointer;font-family:inherit">+ Create plan</button>
+      </div>`;
+  }
+
+  // quick-log button
+  const quickLogHtml=`
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button onclick="showScreen('log')" style="flex:1;background:var(--green);border:none;color:#000;font-size:13px;font-weight:600;padding:11px;border-radius:var(--r);cursor:pointer;font-family:inherit">+ Log trade</button>
+      <button onclick="showScreen('plan');setTimeout(showPlanForm,50)" style="flex:1;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);font-size:13px;padding:11px;border-radius:var(--r);cursor:pointer;font-family:inherit">+ New plan</button>
+    </div>`;
+
+  // prop accounts
+  const props=getProps();
+  let propHtml='';
+  if(props.length){
+    propHtml=`<div class="section-label" style="margin-bottom:8px">Prop accounts</div>`+
+    props.map(p=>{
+      const used=p.startBalance-p.currentBalance;
+      const pct=p.maxDrawdown>0?Math.min(100,Math.round(Math.abs(used)/p.maxDrawdown*100)):0;
+      const col=pct>=80?'var(--red)':pct>=50?'var(--amber)':'var(--green)';
+      const remaining=p.maxDrawdown-Math.abs(used);
+      return`<div class="prop-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:13px;font-weight:600">${esc(p.name)}</span>
+          <span class="mono" style="font-size:13px;font-weight:700;color:${col}">${pct}% DD</span>
+        </div>
+        <div class="prop-bar-track">
+          <div class="prop-bar-fill" style="width:${pct}%;background:${col}"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:2px">
+          <span>Used: <span style="color:${col}">$${Math.abs(used).toLocaleString()}</span> / $${p.maxDrawdown.toLocaleString()}</span>
+          <span>Remaining: <span style="color:var(--text2)">$${remaining>0?remaining.toLocaleString():0}</span></span>
+        </div>
+        ${pct>=80?`<div style="font-size:11px;color:var(--red);margin-top:5px">&#9888; Approaching max drawdown — trade with caution</div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  el.innerHTML=`
+    ${quickLogHtml}
+    ${planHtml}
+    ${propHtml}
+    <div class="streak-bar">
+      <div class="streak-num${streak===0?' zero':''}">${streak}</div>
+      <div class="streak-info">
+        <div class="streak-title">Process streak</div>
+        <div class="streak-sub">${streakMsg}</div>
+        ${dots.length?`<div class="streak-dots">${dots.map(d=>`<div class="streak-dot" style="background:${dotColors[d]}"></div>`).join('')}</div>`:''}
+      </div>
+    </div>
+    ${recentHtml}`;
+}
+
+/* ═══════════════════ PRE-MARKET PLAN ═══════════════════ */
+function getPlans(){return getData().plans||[]}
+function savePlans(a){const d=getData();d.plans=a;saveData(d)}
+function getProps(){return getData().props||[]}
+function saveProps(a){const d=getData();d.props=a;saveData(d)}
+
+function renderPlanList(){
+  const plans=getPlans().sort((a,b)=>b.date.localeCompare(a.date));
+  const el=document.getElementById('plan-list');
+  if(!el)return;
+  if(!plans.length){el.innerHTML='<div class="empty-state">No plans yet.<br>Create your first pre-market plan.</div>';return}
+  el.innerHTML=plans.map(p=>{
+    const linked=getLive().filter(t=>t.date===p.date);
+    const invBadge=p.invRespected==='yes'?'<span style="font-size:10px;color:var(--green)">&#10003; inv. respected</span>':p.invRespected==='no'?'<span style="font-size:10px;color:var(--red)">&#10005; inv. broken</span>':'';
+    return`<div class="entry-card" onclick="showPlanDetail('${p.id}')">
+      <div class="entry-header">
+        <span class="entry-date mono">${p.date}</span>
+        <span style="font-size:12px;color:var(--text2)">${p.biasDir||''}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(p.initialPlan||'No plan written')}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        ${p.profileExpect?`<span style="font-size:10px;color:var(--purple);background:var(--purple-bg);padding:2px 7px;border-radius:10px;border:1px solid var(--purple)">${p.profileExpect}</span>`:''}
+        ${p.biasType?`<span style="font-size:10px;color:var(--blue);background:var(--blue-bg);padding:2px 7px;border-radius:10px;border:1px solid var(--blue)">${p.biasType}</span>`:''}
+        ${invBadge}
+        ${linked.length?`<span style="font-size:10px;color:var(--text3)">${linked.length} trade${linked.length>1?'s':''}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showPlanForm(id){
+  const p=id?getPlans().find(x=>x.id===id):{};
+  window._pf={biasDir:p.biasDir||'',biasType:p.biasType||'',profileExpect:p.profileExpect||'',instFocus:p.instFocus||'',newsAt830:p.newsAt830||'',dayTypePost:p.dayTypePost||'',invRespected:p.invRespected||''};
+  document.getElementById('plan-list-view').style.display='none';
+  document.getElementById('plan-form-view').style.display='block';
+  document.getElementById('plan-detail-view').style.display='none';
+  function sb(val,group,active){return`<button class="msel-btn${active?' msel-active':''}" onclick="pfSel('${group}','${val}',this)">${val}</button>`}
+  document.getElementById('plan-form-content').innerHTML=`
+    <div class="section-label">${id?'Edit':'New'} pre-market plan</div>
+    <div class="card">
+      <div class="fld-label">Date</div>
+      <input type="date" id="p-date" value="${p.date||today()}" style="margin-bottom:12px">
+      <div class="fld-label" style="margin-bottom:6px">Daily bias direction</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+        ${['Bullish','Bearish','No Bias'].map(v=>sb(v,'biasDir',p.biasDir===v)).join('')}
+      </div>
+      <div class="fld-label" style="margin-bottom:6px">Bias type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+        ${['Manipulation','Deep Close Continuation','Range External','No Framework'].map(v=>`<button class="msel-btn${p.biasType===v?' msel-active msel-blue':''}" onclick="pfSel('biasType','${v}',this)">${v}</button>`).join('')}
+      </div>
+      <div class="fld-label" style="margin-bottom:6px">Draw on price / target swing</div>
+      <input type="text" id="p-draw" placeholder="e.g. Relevant high at 21,850" value="${esc(p.drawOnPrice||'')}" style="margin-bottom:12px">
+      <div class="fld-label" style="margin-bottom:6px">Invalidation point (price level)</div>
+      <input type="number" id="p-inv" step="0.25" placeholder="e.g. 21450" value="${p.invPoint||''}" style="margin-bottom:0;font-family:'Courier New',monospace">
+    </div>
+    <div class="card">
+      <div class="fld-label" style="margin-bottom:6px">Initial plan — if X then Y</div>
+      <textarea id="p-initial" rows="3" placeholder="If the 01:00 profile develops bullish and price respects the invalidation at 21450, I will seek long entries on MNQ in continuation of the 08:00 candle...">${esc(p.initialPlan||'')}</textarea>
+      <div class="fld-label" style="margin-top:10px;margin-bottom:6px">Secondary plan — if initial invalidated</div>
+      <textarea id="p-secondary" rows="3" placeholder="If price trades through 21450, I reassess the daily from scratch. The invalidation level becomes confluence for a short setup if the opposing side offers a clean framework...">${esc(p.secondaryPlan||'')}</textarea>
+    </div>
+    <div class="card">
+      <div class="fld-label" style="margin-bottom:6px">Profile expectation</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+        ${PROFILES.map(v=>`<button class="msel-btn${p.profileExpect===v?' msel-active msel-purple':''}" onclick="pfSel('profileExpect','${v}',this)">${v}</button>`).join('')}
+      </div>
+      <div class="fld-label" style="margin-bottom:6px">Instrument focus</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+        ${['MNQ','MES','Both'].map(v=>sb(v,'instFocus',p.instFocus===v)).join('')}
+      </div>
+      <div class="fld-label" style="margin-bottom:6px">8:30 news event?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+        ${['Yes','No','Unknown'].map(v=>`<button class="msel-btn${p.newsAt830===v?' msel-active msel-amber':''}" onclick="pfSel('newsAt830','${v}',this)">${v}</button>`).join('')}
+      </div>
+      <div class="fld-label" style="margin-bottom:6px">Key notes / what to watch</div>
+      <textarea id="p-notes" rows="2" placeholder="Key levels, confluences, things to watch...">${esc(p.planNotes||'')}</textarea>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;font-weight:500">Post-session (fill after trading)</div>
+      <div class="fld-label" style="margin-bottom:6px">Did price respect the invalidation point?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+        <button class="msel-btn${p.invRespected==='yes'?' msel-active':''}" style="${p.invRespected==='yes'?'border-color:var(--green);color:var(--green)':''}" onclick="pfSelColor('invRespected','yes',this,'var(--green)')">Yes &#10003;</button>
+        <button class="msel-btn${p.invRespected==='no'?' msel-active':''}" style="${p.invRespected==='no'?'border-color:var(--red);color:var(--red)':''}" onclick="pfSelColor('invRespected','no',this,'var(--red)')">No &#10005;</button>
+        <button class="msel-btn${p.invRespected==='na'?' msel-active':''}" onclick="pfSel('invRespected','na',this)">N/A</button>
+      </div>
+      <div class="fld-label" style="margin-bottom:6px">Day type (post-session)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${DAY_TYPES.map(v=>sb(v,'dayTypePost',p.dayTypePost===v)).join('')}
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="savePlan('${id||''}')" style="margin-bottom:8px">${id?'Update':'Save'} plan &#8594;</button>
+    ${id?`<button class="btn btn-danger" onclick="deletePlan('${id}')" style="display:block;width:100%;margin-bottom:8px">Delete plan</button>`:''}`;
+}
+
+function pfSel(key,val,btn){
+  window._pf=window._pf||{};window._pf[key]=val;
+  const grid=btn.parentElement;
+  grid.querySelectorAll('.msel-btn').forEach(b=>{b.classList.remove('msel-active','msel-purple','msel-amber','msel-blue');b.style.borderColor='';b.style.color='';});
+  btn.classList.add('msel-active');
+  const colMap={biasType:'msel-blue',profileExpect:'msel-purple',newsAt830:'msel-amber'};
+  if(colMap[key])btn.classList.add(colMap[key]);
+}
+function pfSelColor(key,val,btn,col){
+  window._pf=window._pf||{};window._pf[key]=val;
+  const grid=btn.parentElement;
+  grid.querySelectorAll('.msel-btn').forEach(b=>{b.classList.remove('msel-active');b.style.borderColor='';b.style.color='';});
+  btn.classList.add('msel-active');btn.style.borderColor=col;btn.style.color=col;
+}
+
+function savePlan(id){
+  const f=window._pf||{};
+  const entry={
+    id:id||uid(),date:document.getElementById('p-date').value,
+    biasDir:f.biasDir||'',biasType:f.biasType||'',
+    profileExpect:f.profileExpect||'',instFocus:f.instFocus||'',
+    newsAt830:f.newsAt830||'',dayTypePost:f.dayTypePost||'',invRespected:f.invRespected||'',
+    drawOnPrice:document.getElementById('p-draw').value,
+    invPoint:document.getElementById('p-inv').value,
+    initialPlan:document.getElementById('p-initial').value,
+    secondaryPlan:document.getElementById('p-secondary').value,
+    planNotes:document.getElementById('p-notes').value,
+    ts:new Date().toISOString()
+  };
+  const plans=getPlans();
+  if(id){const i=plans.findIndex(e=>e.id===id);if(i>=0)plans[i]=entry;else plans.unshift(entry);}
+  else plans.unshift(entry);
+  savePlans(plans);hidePlanForm();renderPlanList();
+}
+
+function deletePlan(id){
+  if(!confirm('Delete this plan?'))return;
+  savePlans(getPlans().filter(e=>e.id!==id));hidePlanForm();renderPlanList();
+}
+
+function hidePlanForm(){
+  document.getElementById('plan-list-view').style.display='block';
+  document.getElementById('plan-form-view').style.display='none';
+  document.getElementById('plan-detail-view').style.display='none';
+}
+
+function showPlanDetail(id){
+  const p=getPlans().find(x=>x.id===id);if(!p)return;
+  document.getElementById('plan-list-view').style.display='none';
+  document.getElementById('plan-form-view').style.display='none';
+  document.getElementById('plan-detail-view').style.display='block';
+  document.getElementById('plan-detail-back').onclick=hidePlanForm;
+  const linked=getLive().filter(t=>t.date===p.date);
+  const invColor=p.invRespected==='yes'?'var(--green)':p.invRespected==='no'?'var(--red)':'var(--text3)';
+  const invLabel=p.invRespected==='yes'?'&#10003; Invalidation respected':p.invRespected==='no'?'&#10005; Invalidation broken':'';
+  document.getElementById('plan-detail-content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <span class="mono" style="font-size:14px;font-weight:700">${p.date}</span>
+      <button class="btn btn-ghost" style="width:auto;padding:6px 12px;font-size:12px" onclick="showPlanForm('${p.id}')">Edit</button>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><div class="fld-label">Bias</div><span style="font-size:13px;font-weight:600">${p.biasDir||'—'}</span></div>
+        <div><div class="fld-label">Type</div><span style="color:var(--blue);font-size:12px">${p.biasType||'—'}</span></div>
+        <div><div class="fld-label">Profile expect</div><span style="color:var(--purple);font-size:12px">${p.profileExpect||'—'}</span></div>
+        <div><div class="fld-label">Instrument</div><span style="font-size:12px">${p.instFocus||'—'}</span></div>
+        <div><div class="fld-label">Draw on price</div><span style="font-size:12px;color:var(--text2)">${esc(p.drawOnPrice||'—')}</span></div>
+        <div><div class="fld-label">Inv. point</div><span class="mono" style="font-size:12px">${p.invPoint||'—'}</span></div>
+        <div><div class="fld-label">8:30 news</div><span style="color:var(--amber);font-size:12px">${p.newsAt830||'—'}</span></div>
+        <div><div class="fld-label">Day type</div><span style="font-size:12px;color:var(--green)">${p.dayTypePost||'—'}</span></div>
+      </div>
+      ${invLabel?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:12px;color:${invColor}">${invLabel}</div>`:''}
+    </div>
+    ${p.initialPlan?`<div class="card-sm" style="margin-bottom:8px"><div class="fld-label">Initial plan</div><div style="font-size:13px;line-height:1.7;margin-top:4px">${esc(p.initialPlan)}</div></div>`:''}
+    ${p.secondaryPlan?`<div class="card-sm" style="margin-bottom:8px"><div class="fld-label">Secondary plan</div><div style="font-size:13px;line-height:1.7;margin-top:4px;color:var(--text2)">${esc(p.secondaryPlan)}</div></div>`:''}
+    ${p.planNotes?`<div class="card-sm" style="margin-bottom:12px"><div class="fld-label">Notes / what to watch</div><div style="font-size:13px;line-height:1.7;margin-top:4px;color:var(--text2)">${esc(p.planNotes)}</div></div>`:''}
+    ${linked.length?`<div class="section-label">Trades on this day</div>${linked.map(t=>{
+      const r=t.rResult!==undefined&&t.rResult!==''?parseFloat(t.rResult):null;
+      const rStr=r!==null?`<span class="mono" style="font-size:12px;color:${r>0?'var(--green)':r<0?'var(--red)':'var(--text2)'}">${r>0?'+':''}${r}R</span>`:'';
+      return`<div class="entry-card" onclick="showDetail('${t.id}','plan')">
+        <div class="entry-header"><span class="entry-date mono">${t.instrument} &middot; ${t.bias}</span>${rStr}</div>
+        <div class="entry-meta"><span class="badge ${OB[t.outcome]}">${OL[t.outcome]}</span></div>
+      </div>`;}).join('')}`:''}`;
+}
+
 /* ═══════════════════ LIVE JOURNAL ═══════════════════ */
+function setJournalSort(mode){
+  _journalSort=mode;
+  document.querySelectorAll('#sort-date-btn,#sort-r-btn,#sort-worst-btn').forEach(b=>{
+    b.style.borderColor='var(--border2)';b.style.color='var(--text2)';
+  });
+  const active={date:'sort-date-btn',r:'sort-r-btn',worst:'sort-worst-btn'}[mode];
+  const el=document.getElementById(active);
+  if(el){el.style.borderColor='var(--green)';el.style.color='var(--green)';}
+  renderJournal();
+}
 function renderJournal(){
-  const entries=getLive(),el=document.getElementById('journal-list');
+  let entries=[...getLive()];
+  const el=document.getElementById('journal-list');
   if(!entries.length){el.innerHTML='<div class="empty-state">No live entries yet.</div>';return}
+  if(_journalSort==='r'){
+    entries=entries.filter(e=>e.rResult!==''&&e.rResult!==undefined).sort((a,b)=>parseFloat(b.rResult)-parseFloat(a.rResult));
+  } else if(_journalSort==='worst'){
+    entries=entries.filter(e=>e.rResult!==''&&e.rResult!==undefined).sort((a,b)=>parseFloat(a.rResult)-parseFloat(b.rResult));
+  }
+  // default: date order (already newest first from getLive)
   el.innerHTML=entries.map(e=>{
     const preview=Object.values(e.answers||{}).find(v=>v&&v.trim())||'No notes';
+    const r=e.rResult!==undefined&&e.rResult!==''?parseFloat(e.rResult):null;
+    const rStr=r!==null?`<span class="mono" style="font-size:12px;font-weight:700;color:${r>0?'var(--green)':r<0?'var(--red)':'var(--text2)'}">${r>0?'+':''}${r}R</span>`:'';
     return`<div class="entry-card" onclick="showDetail('${e.id}')">
-      <div class="entry-header"><span class="entry-date mono">${e.date||e.ts?.slice(0,10)}</span><span class="entry-inst mono">${e.instrument} &middot; ${e.bias}</span></div>
+      <div class="entry-header"><span class="entry-date mono">${e.date||e.ts?.slice(0,10)}</span><span class="entry-inst mono">${e.instrument||'—'} ${e.bias?'&middot; '+e.bias:''}</span></div>
       <div class="entry-preview">${esc(preview)}</div>
-      <div class="entry-meta"><span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span></div>
+      <div class="entry-meta">
+        <span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span>
+        ${rStr}
+        ${(e.tags||[]).slice(0,3).map(t=>`<span class="tag" style="font-size:10px;padding:2px 7px">${esc(t)}</span>`).join('')}
+      </div>
     </div>`;}).join('');
 }
 
-function showDetail(id,fromSearch){
+function showDetail(id,fromScreen){
   const e=getLive().find(x=>x.id===id);if(!e)return;
   const qs=e.questions||OQ[e.outcome]||[];
-  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  const r=e.rResult!==undefined&&e.rResult!==''?parseFloat(e.rResult):null;
+  // find linked plan
+  const plan=getPlans().find(p=>p.date===(e.date||e.ts?.slice(0,10)));
+  const rStr=r!==null?`<span class="mono" style="font-size:22px;font-weight:700;color:${r>0?'var(--green)':r<0?'var(--red)':'var(--text2)'}">${r>0?'+':''}${r}R</span>`:'';
+  let html='';
+  // plan banner — shown if a plan exists for this trade's date
+  if(plan){
+    html+=`<div class="plan-banner">
+      <div class="plan-banner-tag">PLAN FOR THIS DAY</div>
+      <div style="display:flex;gap:10px;margin-bottom:6px;flex-wrap:wrap">
+        ${plan.biasDir?`<span style="font-size:12px;font-weight:600">${plan.biasDir}</span>`:''}
+        ${plan.biasType?`<span style="font-size:12px;color:var(--blue)">${plan.biasType}</span>`:''}
+        ${plan.profileExpect?`<span style="font-size:12px;color:var(--purple)">${plan.profileExpect}</span>`:''}
+      </div>
+      ${plan.initialPlan?`<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:6px">${esc(plan.initialPlan.slice(0,160))}${plan.initialPlan.length>160?'…':''}</div>`:''}
+      ${plan.invPoint?`<div style="font-size:11px;color:var(--text3)">Inv. point: <span class="mono">${plan.invPoint}</span></div>`:''}
+      ${plan.invRespected?`<div style="font-size:11px;margin-top:4px;color:${plan.invRespected==='yes'?'var(--green)':plan.invRespected==='no'?'var(--red)':'var(--text3)'}">${plan.invRespected==='yes'?'&#10003; Invalidation respected':plan.invRespected==='no'?'&#10005; Invalidation broken':'N/A'}</div>`:''}
+      <button onclick="showPlanDetail('${plan.id}')" style="background:none;border:none;color:var(--blue);font-size:11px;cursor:pointer;padding:6px 0 0;font-family:inherit">View full plan &#8594;</button>
+    </div>`;
+  }
+  html+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span>
-    <span class="mono" style="font-size:11px;color:var(--text3)">${e.date||e.ts?.slice(0,10)}</span>
+    <div style="display:flex;align-items:center;gap:10px">${rStr}<span class="mono" style="font-size:11px;color:var(--text3)">${e.date||e.ts?.slice(0,10)}</span></div>
   </div>
-  <div class="card-sm" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-    <div><div class="section-label" style="margin-bottom:2px">instrument</div><span class="mono" style="font-size:16px;font-weight:700">${e.instrument}</span></div>
-    <div style="text-align:right"><div class="section-label" style="margin-bottom:2px">selection</div><span style="font-size:13px;color:var(--purple)">${e.bias}</span></div>
+  <div class="card-sm" style="margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:${(e.dayType||e.profileConfirmed||e.fwQuality||e.pairDiv||e.mgmtGrade)?'10px':'0'}">
+      <div><div class="section-label" style="margin-bottom:2px">instrument</div><span class="mono" style="font-size:16px;font-weight:700">${e.instrument}</span></div>
+      <div><div class="section-label" style="margin-bottom:2px">selection</div><span style="font-size:13px;color:var(--purple)">${e.bias}</span></div>
+    </div>
+    ${(e.dayType||e.profileConfirmed||e.fwQuality||e.pairDiv||e.mgmtGrade)?`
+    <div style="border-top:1px solid var(--border);padding-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${e.dayType?`<div><div class="section-label" style="margin-bottom:2px">day type</div><span style="font-size:12px;color:var(--green)">${e.dayType}</span></div>`:''}
+      ${e.profileConfirmed?`<div><div class="section-label" style="margin-bottom:2px">profile</div><span style="font-size:12px;color:var(--purple)">${e.profileConfirmed}</span></div>`:''}
+      ${e.fwQuality?`<div><div class="section-label" style="margin-bottom:2px">fw quality</div><span style="font-size:12px;color:var(--amber)">${e.fwQuality}</span></div>`:''}
+      ${e.pairDiv?`<div><div class="section-label" style="margin-bottom:2px">divergence</div><span style="font-size:12px;color:var(--blue)">${e.pairDiv}</span></div>`:''}
+      ${e.mgmtGrade?`<div><div class="section-label" style="margin-bottom:2px">management</div><span style="font-size:12px">${e.mgmtGrade}</span></div>`:''}
+    </div>`:''}
   </div>`;
   if(!e.noTrade&&e.answers?.q0)html+=`<div style="margin-bottom:10px"><div class="section-label">description</div><div style="font-size:13px;line-height:1.6;color:var(--text2)">${esc(e.answers.q0)}</div></div><hr class="divider">`;
   qs.forEach((q,i)=>{const a=e.answers?.['q'+(i+1)];if(a)html+=`<div style="margin-bottom:10px"><div style="font-size:12px;color:var(--text2);margin-bottom:4px"><span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text3);margin-right:4px">0${i+1}</span>${q}</div><div style="font-size:13px;line-height:1.6">${esc(a)}</div></div>`;});
   if(e.answers?.qnotes)html+=`<hr class="divider"><div><div class="section-label">notes</div><div style="font-size:13px;line-height:1.6;color:var(--text2)">${esc(e.answers.qnotes)}</div></div>`;
+  if(e.tags&&e.tags.length)html+=`<hr class="divider"><div class="section-label">Tags</div><div class="tag-wrap">${renderTagPills(e.tags,false)}</div>`;
   html+=`<hr class="divider"><button class="btn btn-ghost" onclick="editLive('${e.id}')">Edit entry</button>`;
   document.getElementById('detail-content').innerHTML=html;
-  document.getElementById('detail-back-btn').onclick=()=>showScreen(fromSearch?'search':'journal');
+  document.getElementById('detail-back-btn').onclick=()=>showScreen(fromScreen||'journal');
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
   document.getElementById('screen-detail').classList.add('active');
 }
@@ -641,6 +1264,13 @@ function editLive(id){
   const map={gw:['win','yes'],bw:['win','no'],gl:['loss','yes'],bl:['loss','no'],gp:['notrade','no'],bp:['notrade','yes']};
   [flowState.outcome,flowState.process]=map[e.outcome]||['win','yes'];
   flowState.instrument=e.instrument;flowState.bias=e.bias;flowState.date=e.date;
+  flowState.rResult=e.rResult||'';
+  flowState.dayType=e.dayType||'';
+  flowState.profileConfirmed=e.profileConfirmed||'';
+  flowState.fwQuality=e.fwQuality||'';
+  flowState.pairDiv=e.pairDiv||'';
+  flowState.mgmtGrade=e.mgmtGrade||'';
+  _entryTags=[...(e.tags||[])];
   Object.assign(flowState,e.answers||{});
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
   document.getElementById('screen-log').classList.add('active');
@@ -692,7 +1322,7 @@ function showBtForm(id){
       </div>
       <div class="fld"><div class="fld-label">Instrument</div>
         <div class="sel-row c3" id="bt-inst">
-          ${['ES','NQ','YM'].map(s=>`<button class="sel-btn${e.instrument===s?' active':''}" onclick="btSel('instrument','${s}','bt-inst')">${s}</button>`).join('')}
+          ${['MNQ','MES'].map(s=>`<button class="sel-btn${e.instrument===s?' active':''}" onclick="btSel('instrument','${s}','bt-inst')">${s}</button>`).join('')}
         </div>
       </div>
       <div class="fld"><div class="fld-label">Direction</div>
@@ -733,10 +1363,20 @@ function showBtForm(id){
         <textarea id="bt-notes" rows="4" placeholder="Setup description, observations, what you noticed...">${esc(e.notes||'')}</textarea>
       </div>
     </div>
+    <div class="card" style="margin-top:4px">
+      <div class="fld-label" style="margin-bottom:8px">Tags</div>
+      <div class="tag-wrap" id="bt-tag-wrap">${renderTagPills(window._btTags,true,'bt')}</div>
+      <div class="tag-input-row">
+        <input type="text" id="bt-tag-input" placeholder="add tag..." onkeydown="if(event.key==='Enter'){event.preventDefault();addBtTag()}">
+        <button onclick="addBtTag()">Add</button>
+      </div>
+      <div style="margin-top:5px">${getAllTags().filter(t=>!(window._btTags||[]).includes(t)).map(t=>`<span class="tag-sug" onclick="addBtTagFromSug('${esc(t)}')">${esc(t)}</span>`).join('')}</div>
+    </div>
     <button class="btn btn-primary" onclick="saveBtEntry('${id||''}')" style="margin-bottom:8px">${id?'Update':'Save'} entry &#8594;</button>
     ${id?`<button class="btn btn-danger" onclick="deleteBt('${id}')" style="margin-bottom:8px;display:block;width:100%">Delete entry</button>`:''}`;
   // store selections in temp object
   window._btForm={session:e.session||'',instrument:e.instrument||'',direction:e.direction||'',dailyBias:e.dailyBias||'',dailyProfile:e.dailyProfile||'',outcome:e.outcome||''};
+  window._btTags=[...(e.tags||[])];
 }
 
 function btSel(key,val,rowId){
@@ -770,6 +1410,7 @@ function saveBtEntry(id){
     outcome:f.outcome,
     screenshotRef:document.getElementById('bt-screenshot').value,
     notes:document.getElementById('bt-notes').value,
+    tags:[...(window._btTags||[])],
     ts:new Date().toISOString()
   };
   const bt=getBt();
@@ -828,8 +1469,141 @@ function showBtDetail(id){
     <button class="btn btn-ghost" onclick="showBtForm('${e.id}')">Edit entry</button>`;
 }
 
+/* ═══════════════════ WEEKLY / MONTHLY REVIEW ═══════════════════ */
+function getReviews(){return getData().reviews||{}}
+function saveReviews(r){const d=getData();d.reviews=r;saveData(d)}
+
+function setRevMode(m){
+  _revMode=m;
+  const wb=document.getElementById('rev-week-btn');
+  const mb=document.getElementById('rev-month-btn');
+  if(wb){wb.style.borderColor=m==='week'?'var(--green)':'var(--border)';wb.style.color=m==='week'?'var(--green)':'var(--text2)';}
+  if(mb){mb.style.borderColor=m==='month'?'var(--green)':'var(--border)';mb.style.color=m==='month'?'var(--green)':'var(--text2)';}
+  renderReview();
+}
+
+function weekStart(dateStr){
+  // Returns Monday of the week for a given date string
+  const d=new Date(dateStr+'T12:00:00');
+  const dow=d.getDay();
+  const diff=dow===0?-6:1-dow; // Monday=1, Sunday=0
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().slice(0,10);
+}
+
+function monthKey(dateStr){return dateStr.slice(0,7)}
+
+function renderReview(){
+  const el=document.getElementById('review-content');
+  if(!el)return;
+  const live=getLive();
+  if(!live.length){
+    el.innerHTML='<div class="empty-state">No trades yet to review.</div>';
+    return;
+  }
+
+  const keyFn=_revMode==='week'?weekStart:monthKey;
+  const groups={};
+  live.forEach(e=>{
+    const d=e.date||e.ts?.slice(0,10);
+    if(!d)return;
+    const k=keyFn(d);
+    if(!groups[k])groups[k]=[];
+    groups[k].push(e);
+  });
+
+  const reviews=getReviews();
+  const keys=Object.keys(groups).sort().reverse();
+
+  el.innerHTML=keys.map(k=>{
+    const trades=groups[k];
+    const goodCount=trades.filter(e=>['gw','gl','gp'].includes(e.outcome)).length;
+    const processRate=Math.round(goodCount/trades.length*100);
+    const rTrades=trades.filter(e=>e.rResult!==undefined&&e.rResult!=='');
+    const totalR=rTrades.reduce((sum,e)=>sum+parseFloat(e.rResult),0);
+    const wins=rTrades.filter(e=>parseFloat(e.rResult)>0).length;
+    const losses=rTrades.filter(e=>parseFloat(e.rResult)<0).length;
+    const wr=rTrades.length?Math.round(wins/rTrades.length*100):null;
+    const saved=reviews[k]||{};
+    const label=_revMode==='week'?`Week of ${k}`:k;
+    const rColor=totalR>0?'var(--green)':totalR<0?'var(--red)':'var(--text2)';
+    const procColor=processRate>=80?'var(--green)':processRate>=60?'var(--amber)':'var(--red)';
+
+    return`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:12px;overflow:hidden">
+      <!-- header -->
+      <div onclick="toggleRevBlock('${k}')" style="padding:13px 14px;background:var(--bg3);border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Courier New',monospace;font-size:12px;font-weight:700">${label}</span>
+        <div style="display:flex;gap:10px;align-items:center;font-size:11px">
+          <span style="color:${procColor}">${processRate}% process</span>
+          <span style="color:${rColor};font-family:'Courier New',monospace;font-weight:700">${totalR>0?'+':''}${totalR.toFixed(1)}R</span>
+          ${wr!==null?`<span style="color:var(--text2)">${wr}% WR</span>`:''}
+          <span style="color:var(--text3)">${trades.length} trade${trades.length!==1?'s':''}</span>
+          <span style="color:var(--text3)">&#8964;</span>
+        </div>
+      </div>
+      <!-- body -->
+      <div id="rev-block-${k}" style="display:none">
+        <!-- trade rows -->
+        <div style="padding:10px 14px 0">
+          ${trades.map(e=>{
+            const r=e.rResult!==undefined&&e.rResult!==''?parseFloat(e.rResult):null;
+            const rStr=r!==null?`<span class="mono" style="font-size:11px;font-weight:700;color:${r>0?'var(--green)':r<0?'var(--red)':'var(--text2)'}">${r>0?'+':''}${r}R</span>`:'';
+            return`<div onclick="showDetail('${e.id}','review')" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer">
+              <div style="display:flex;gap:8px;align-items:center;flex:1;min-width:0">
+                <span class="mono" style="font-size:11px;color:var(--text3);flex-shrink:0">${e.date||e.ts?.slice(0,10)}</span>
+                <span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span>
+                <span style="font-size:11px;color:var(--text2);flex-shrink:0">${e.instrument||''}</span>
+                ${e.mgmtGrade?`<span style="font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.mgmtGrade}</span>`:''}
+              </div>
+              ${rStr}
+            </div>`;
+          }).join('')}
+        </div>
+        <!-- stats summary -->
+        <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-bottom:1px solid var(--border)">
+          <div style="text-align:center;background:var(--bg3);border-radius:var(--r);padding:8px">
+            <div style="font-family:'Courier New',monospace;font-size:16px;font-weight:700;color:${procColor}">${processRate}%</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">process</div>
+          </div>
+          <div style="text-align:center;background:var(--bg3);border-radius:var(--r);padding:8px">
+            <div style="font-family:'Courier New',monospace;font-size:16px;font-weight:700;color:${rColor}">${totalR>0?'+':''}${totalR.toFixed(1)}R</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">total R</div>
+          </div>
+          <div style="text-align:center;background:var(--bg3);border-radius:var(--r);padding:8px">
+            <div style="font-family:'Courier New',monospace;font-size:16px;font-weight:700">${wins}W ${losses}L</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:2px">${wr!==null?wr+'% WR':'no R data'}</div>
+          </div>
+        </div>
+        <!-- pattern notes -->
+        <div style="padding:12px 14px">
+          <div class="section-label" style="margin-bottom:6px">Pattern notes</div>
+          <textarea rows="3" placeholder="What patterns did you notice this ${_revMode==='week'?'week':'month'}? What to improve? What worked?" style="font-size:12px" oninput="debounceRevNote('${k}',this.value)">${esc(saved.notes||'')}</textarea>
+          ${saved.notes?`<div style="font-size:10px;color:var(--text3);margin-top:4px;text-align:right">Last edited: ${saved.ts?new Date(saved.ts).toLocaleDateString():'—'}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleRevBlock(k){
+  const el=document.getElementById('rev-block-'+k);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+function saveRevNote(k,note){
+  const r=getReviews();
+  r[k]={notes:note,ts:new Date().toISOString()};
+  saveReviews(r);
+}
+let _revNoteTimer=null;
+function debounceRevNote(k,note){
+  clearTimeout(_revNoteTimer);
+  _revNoteTimer=setTimeout(()=>saveRevNote(k,note),600);
+}
+
 /* ═══════════════════ SEARCH ═══════════════════ */
-let _srchMode='live';
+let _srchMode='live',srchFilters={outcome:'',inst:'',tag:'',btOutcome:'',btSession:''},_journalSort='date',_revMode='week';
 function setSrchMode(m){
   _srchMode=m;
   document.getElementById('srch-live-btn').classList.toggle('active',m==='live');
@@ -845,6 +1619,16 @@ function toggleChip(btn,group){
   btn.classList.add('active');srchFilters[group]=btn.dataset.val;runSearch();
 }
 
+function buildTagChips(){
+  const el=document.getElementById('tag-filters');if(!el)return;
+  const tags=getAllTags();
+  el.innerHTML=`<button class="chip${_srchTag===''?' active':''}" data-val="" onclick="setTagChip(this)">All</button>`
+    +tags.map(t=>`<button class="chip${_srchTag===t?' active':''}" data-val="${esc(t)}" onclick="setTagChip(this)">${esc(t)}</button>`).join('');
+}
+function setTagChip(btn){
+  document.querySelectorAll('#tag-filters .chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');_srchTag=btn.dataset.val;runSearch();
+}
 function runSearch(){
   const kw=(document.getElementById('kw-input')?.value||'').trim().toLowerCase();
   const df=document.getElementById('date-from')?.value||'';
@@ -852,6 +1636,7 @@ function runSearch(){
   let entries=_srchMode==='live'?getLive():getBt();
   if(_srchMode==='live'){
     if(srchFilters.outcome)entries=entries.filter(e=>e.outcome===srchFilters.outcome);
+    if(_srchTag)entries=entries.filter(e=>(e.tags||[]).includes(_srchTag));
   } else {
     if(srchFilters['bt-outcome'])entries=entries.filter(e=>e.outcome===srchFilters['bt-outcome']);
     if(srchFilters['bt-session'])entries=entries.filter(e=>e.session===srchFilters['bt-session']);
@@ -861,7 +1646,7 @@ function runSearch(){
   if(dt)entries=entries.filter(e=>(e.date||e.ts?.slice(0,10))<=dt);
   if(kw)entries=entries.filter(e=>{
     const blob=_srchMode==='live'
-      ?[e.instrument,e.bias,OL[e.outcome],e.date,...Object.values(e.answers||{})].join(' ').toLowerCase()
+      ?[e.instrument,e.bias,OL[e.outcome],e.date,...(e.tags||[]),...Object.values(e.answers||{})].join(' ').toLowerCase()
       :[e.instrument,e.session,e.direction,e.dailyBias,e.dailyProfile,e.outcome,e.notes,e.screenshotRef,e.date].join(' ').toLowerCase();
     return blob.includes(kw);
   });
@@ -881,12 +1666,15 @@ function runSearch(){
       return`<div class="entry-card" onclick="showDetail('${e.id}',true)">
         <div class="entry-header"><span class="entry-date mono">${e.date||e.ts?.slice(0,10)}</span><span class="entry-inst mono">${e.instrument} &middot; ${e.bias}</span></div>
         <div class="entry-preview">${hl(snip)||'No notes'}</div>
-        <div class="entry-meta"><span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span></div>
+        <div class="entry-meta">
+          <span class="badge ${OB[e.outcome]}">${OL[e.outcome]}</span>
+          ${(e.tags||[]).slice(0,3).map(t=>`<span class="tag" style="font-size:10px;padding:2px 7px">${esc(t)}</span>`).join('')}
+        </div>
       </div>`;}).join('');
   } else {
     el.innerHTML=entries.map(e=>`
       <div class="entry-card" onclick="showBtDetailFromSearch('${e.id}')">
-        <div class="entry-header"><span class="entry-date mono">${e.date}</span><span class="entry-inst mono">${e.instrument} &middot; ${e.session}</span></div>
+        <div class="entry-header"><span class="entry-date mono">${e.date}</span><span class="entry-inst mono">${e.instrument||'—'} ${e.session?'&middot; '+e.session:''}</span></div>
         <div class="entry-preview">${hl(e.notes?.slice(0,120)||'No notes')}</div>
         <div class="entry-meta">
           <span class="badge" style="${btOutcomeBadge(e.outcome)}">${e.outcome}</span>
@@ -912,71 +1700,331 @@ function setStatsMode(m){
 function renderStats(){
   const el=document.getElementById('stats-content');
   if(_statsMode==='live'){
-    const entries=getLive();
-    if(!entries.length){el.innerHTML='<div class="empty-state">No live entries yet.</div>';return}
-    const total=entries.length,cat={gw:0,bw:0,gl:0,bl:0,gp:0,bp:0},inst={ES:0,NQ:0,YM:0},bias={Weakest:0,Strongest:0};
-    entries.forEach(e=>{cat[e.outcome]=(cat[e.outcome]||0)+1;if(e.instrument)inst[e.instrument]=(inst[e.instrument]||0)+1;if(e.bias)bias[e.bias]=(bias[e.bias]||0)+1;});
-    const good=cat.gw+cat.gl+cat.gp,wins=cat.gw+cat.bw,losses=cat.gl+cat.bl;
-    const wr=wins+losses>0?Math.round(wins/(wins+losses)*100)+'%':'—';
-    const maxI=Math.max(...Object.values(inst),1);
-    el.innerHTML=`
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-val" style="color:var(--green)">${Math.round(good/total*100)}%</div><div class="stat-lbl">good process rate</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--blue)">${wr}</div><div class="stat-lbl">win rate</div></div>
-        <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">total entries</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--purple)">${cat.gp+cat.bp}</div><div class="stat-lbl">no-trade sessions</div></div>
-      </div>
-      <div class="card"><div class="section-label">outcome breakdown</div>
-        ${Object.entries(cat).map(([k,v])=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
-          <span class="badge ${OB[k]}" style="min-width:74px;justify-content:center">${OL[k]}</span>
-          <div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden"><div style="height:100%;width:${total?Math.round(v/total*100):0}%;background:var(--border2);border-radius:2px"></div></div>
-          <span class="mono" style="font-size:11px;color:var(--text3);min-width:14px;text-align:right">${v}</span>
-        </div>`).join('')}
-      </div>
-      <div class="card"><div class="section-label">instrument</div>
-        ${['ES','NQ','YM'].map(i=>`<div class="bar-row"><span class="bar-label">${i}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(inst[i]/maxI*100)}%;background:var(--green2)"></div></div><span class="bar-count">${inst[i]}</span></div>`).join('')}
-        <hr class="divider"><div class="section-label">selection</div>
-        <div style="display:flex;gap:10px;margin-top:4px">
-          ${['Weakest','Strongest'].map(b=>`<div style="flex:1;text-align:center"><div class="mono" style="font-size:20px;font-weight:700;color:var(--purple)">${bias[b]||0}</div><div style="font-size:11px;color:var(--text2);margin-top:2px">${b}</div></div>`).join('<div style="width:1px;background:var(--border)"></div>')}
-        </div>
-      </div>`;
+    renderLivePerf(el);
   } else {
-    const bt=getBt();
-    if(!bt.length){el.innerHTML='<div class="empty-state">No backtest entries yet.</div>';return}
-    const total=bt.length,oc={Win:0,Loss:0,BE:0},inst={ES:0,NQ:0,YM:0},sess={},profile={};
-    bt.forEach(e=>{
-      oc[e.outcome]=(oc[e.outcome]||0)+1;
-      if(e.instrument)inst[e.instrument]=(inst[e.instrument]||0)+1;
-      if(e.session)sess[e.session]=(sess[e.session]||0)+1;
-      if(e.dailyProfile)profile[e.dailyProfile]=(profile[e.dailyProfile]||0)+1;
-    });
-    const wr=oc.Win+oc.Loss>0?Math.round(oc.Win/(oc.Win+oc.Loss)*100)+'%':'—';
-    const maxI=Math.max(...Object.values(inst),1);
-    const maxS=Math.max(...Object.values(sess),1);
-    el.innerHTML=`
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-val" style="color:var(--green)">${wr}</div><div class="stat-lbl">win rate</div></div>
-        <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">total trades</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--green)">${oc.Win}</div><div class="stat-lbl">wins</div></div>
-        <div class="stat-card"><div class="stat-val" style="color:var(--red)">${oc.Loss}</div><div class="stat-lbl">losses</div></div>
-      </div>
-      <div class="card"><div class="section-label">instrument</div>
-        ${['ES','NQ','YM'].map(i=>`<div class="bar-row"><span class="bar-label">${i}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(inst[i]/maxI*100)}%;background:var(--teal)"></div></div><span class="bar-count">${inst[i]}</span></div>`).join('')}
-      </div>
-      <div class="card"><div class="section-label">by session</div>
-        ${SESSIONS.map(s=>`<div class="bar-row"><span class="bar-label" style="width:48px;font-size:10px">${s}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round((sess[s]||0)/maxS*100)}%;background:var(--blue)"></div></div><span class="bar-count">${sess[s]||0}</span></div>`).join('')}
-      </div>
-      <div class="card"><div class="section-label">by daily profile</div>
-        ${PROFILES.map(p=>`<div class="bar-row"><span class="bar-label" style="width:96px;font-size:10px;overflow:hidden;white-space:nowrap">${p}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round((profile[p]||0)/Math.max(...Object.values(profile),1)*100)}%;background:var(--amber)"></div></div><span class="bar-count">${profile[p]||0}</span></div>`).join('')}
-      </div>`;
+    renderBtPerf(el);
   }
+}
+
+/* ── helpers ── */
+function rColor(r){return r>0?'var(--green)':r<0?'var(--red)':'var(--text2)'}
+function fmt(r){return(r>0?'+':'')+r.toFixed(2)+'R'}
+function statCard(val,lbl,col){
+  return`<div class="stat-card"><div class="stat-val" style="color:${col||'var(--text)'}">${val}</div><div class="stat-lbl">${lbl}</div></div>`;
+}
+function rBar(label,data,color,labelWidth){
+  if(!data||!data.count)return'';
+  const avg=data.sum/data.count;
+  const wr=Math.round(data.wins/data.count*100);
+  const barW=Math.min(100,Math.abs(avg)*25);
+  const lw=labelWidth||'110px';
+  return`<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
+    <span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text2);min-width:${lw};max-width:${lw};overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${label}</span>
+    <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:${barW}%;background:${avg>=0?color:'var(--red)'};border-radius:3px"></div>
+    </div>
+    <span style="font-family:'Courier New',monospace;font-size:10px;color:${rColor(avg)};min-width:38px;text-align:right">${fmt(avg)}</span>
+    <span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text3);min-width:28px;text-align:right">${wr}%</span>
+    <span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text3);min-width:16px;text-align:right">${data.count}</span>
+  </div>`;
+}
+function countBar(label,count,max,color,labelWidth){
+  const lw=labelWidth||'60px';
+  return`<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+    <span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text2);min-width:${lw}">${label}</span>
+    <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:${max?Math.round(count/max*100):0}%;background:${color};border-radius:3px"></div>
+    </div>
+    <span style="font-family:'Courier New',monospace;font-size:10px;color:var(--text3);min-width:16px;text-align:right">${count}</span>
+  </div>`;
+}
+function buildBreakdown(entries,keyFn){
+  const map={};
+  entries.forEach(e=>{
+    const k=keyFn(e);if(!k)return;
+    if(!map[k])map[k]={sum:0,count:0,wins:0};
+    const r=parseFloat(e.rResult);
+    map[k].sum+=r;map[k].count++;if(r>0)map[k].wins++;
+  });
+  return map;
+}
+function calcStreaks(rs){
+  let maxW=0,curW=0,maxL=0,curL=0,curWRun=0,curLRun=0;
+  rs.forEach(r=>{
+    if(r>0){curW++;maxW=Math.max(maxW,curW);curL=0;curWRun++}
+    else if(r<0){curL++;maxL=Math.max(maxL,curL);curW=0;curLRun++}
+    else{curW=0;curL=0;}
+  });
+  return{maxW,maxL,curWRun,curLRun};
+}
+
+function renderLivePerf(el){
+  const all=getLive();
+  const trades=all.filter(e=>!e.noTrade&&e.rResult!==''&&e.rResult!==undefined&&!isNaN(parseFloat(e.rResult)));
+  const allTrades=all.filter(e=>!e.noTrade);
+  const passes=all.filter(e=>e.noTrade);
+  const good=all.filter(e=>['gw','gl','gp'].includes(e.outcome));
+
+  if(!trades.length&&!allTrades.length){
+    el.innerHTML='<div class="empty-state">No live trades yet.<br>Log your first trade using the Log tab.</div>';return;
+  }
+
+  const rs=trades.map(e=>parseFloat(e.rResult));
+  const wins=rs.filter(r=>r>0),losses=rs.filter(r=>r<0),bes=rs.filter(r=>r===0);
+  const totalR=rs.reduce((a,b)=>a+b,0);
+  const avgR=rs.length?totalR/rs.length:0;
+  const sumW=wins.reduce((a,b)=>a+b,0);
+  const sumL=Math.abs(losses.reduce((a,b)=>a+b,0));
+  const pf=sumL>0?(sumW/sumL):wins.length?999:0;
+  const ev=rs.length?avgR:0;
+  const wr=rs.length?Math.round(wins.length/rs.length*100):0;
+  const gpr=all.length?Math.round(good.length/all.length*100):0;
+  const bestR=rs.length?Math.max(...rs):0;
+  const worstR=rs.length?Math.min(...rs):0;
+  const {maxW,maxL}=rs.length?calcStreaks(rs):{maxW:0,maxL:0};
+
+  // breakdowns — only from trades with R logged
+  const byProfile=buildBreakdown(trades,e=>e.profileConfirmed);
+  const byFwQ=buildBreakdown(trades,e=>e.fwQuality);
+  const byDiv=buildBreakdown(trades,e=>e.pairDiv);
+  const byMgmt=buildBreakdown(trades,e=>e.mgmtGrade);
+  const byInst=buildBreakdown(trades,e=>e.instrument);
+  const byDayType=buildBreakdown(trades,e=>e.dayType);
+  const bySel=buildBreakdown(trades,e=>e.bias);
+
+  // R curve (running total)
+  let running=0;
+  const curve=rs.map(r=>{running+=r;return running.toFixed(2)});
+
+  el.innerHTML=`
+    <!-- KPIs -->
+    <div class="stat-grid">
+      ${statCard(wr+'%','win rate','var(--blue)')}
+      ${statCard(fmt(totalR),'total R',totalR>=0?'var(--green)':'var(--red)')}
+      ${statCard(fmt(avgR),'avg R / trade',avgR>=0?'var(--green)':'var(--red)')}
+      ${statCard(pf===999?'∞':pf.toFixed(2),'profit factor','var(--teal)')}
+      ${statCard(gpr+'%','good process rate','var(--purple)')}
+      ${statCard(fmt(ev),'expected value',ev>=0?'var(--green)':'var(--red)')}
+      ${statCard('+'+bestR.toFixed(2)+'R','best trade','var(--green)')}
+      ${statCard(worstR.toFixed(2)+'R','worst trade','var(--red)')}
+    </div>
+
+    <!-- W/L/BE + streaks -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="section-label">Trade breakdown</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;text-align:center">
+        <div><div class="mono" style="font-size:20px;font-weight:700;color:var(--green)">${wins.length}</div><div style="font-size:11px;color:var(--text2)">Wins</div></div>
+        <div><div class="mono" style="font-size:20px;font-weight:700;color:var(--red)">${losses.length}</div><div style="font-size:11px;color:var(--text2)">Losses</div></div>
+        <div><div class="mono" style="font-size:20px;font-weight:700;color:var(--text2)">${bes.length}</div><div style="font-size:11px;color:var(--text2)">Breakeven</div></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center">
+        <div><div class="mono" style="font-size:18px;font-weight:700;color:var(--green)">${maxW}</div><div style="font-size:11px;color:var(--text2)">Max win streak</div></div>
+        <div><div class="mono" style="font-size:18px;font-weight:700;color:var(--red)">${maxL}</div><div style="font-size:11px;color:var(--text2)">Max loss streak</div></div>
+      </div>
+    </div>
+
+    <!-- Outcome breakdown -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="section-label">Process outcome breakdown</div>
+      ${Object.entries({gw:0,bw:0,gl:0,bl:0,gp:0,bp:0}).map(([k])=>{
+        const v=all.filter(e=>e.outcome===k).length;
+        return`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+          <span class="badge ${OB[k]}" style="min-width:76px;justify-content:center">${OL[k]}</span>
+          <div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${all.length?Math.round(v/all.length*100):0}%;background:var(--border2);border-radius:2px"></div>
+          </div>
+          <span class="mono" style="font-size:11px;color:var(--text3);min-width:14px;text-align:right">${v}</span>
+        </div>`;}).join('')}
+    </div>
+
+    <!-- R running curve as text summary -->
+    ${curve.length>=2?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label">R progression (last ${Math.min(curve.length,20)} trades)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        ${rs.slice(-20).map((r,i)=>`<span class="mono" style="font-size:11px;padding:3px 7px;border-radius:4px;background:var(--bg3);color:${rColor(r)}">${r>0?'+':''}${r.toFixed(2)}</span>`).join('')}
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text2)">Running total: <span class="mono" style="color:${totalR>=0?'var(--green)':'var(--red)'};font-weight:700">${fmt(totalR)}</span></div>
+    </div>`:''}
+
+    <!-- R by instrument -->
+    ${Object.keys(byInst).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by instrument <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${['MNQ','MES'].map(k=>rBar(k,byInst[k],'var(--teal)','60px')).join('')}
+    </div>`:''}
+
+    <!-- R by selection -->
+    ${Object.keys(bySel).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by selection <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${['Weakest','Strongest'].map(k=>rBar(k,bySel[k],'var(--purple)','80px')).join('')}
+    </div>`:''}
+
+    <!-- R by daily profile -->
+    ${Object.keys(byProfile).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by daily profile <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${PROFILES.map(k=>rBar(k,byProfile[k],'var(--purple)')).join('')}
+    </div>`:''}
+
+    <!-- R by day type -->
+    ${Object.keys(byDayType).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by day type <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${DAY_TYPES.map(k=>rBar(k,byDayType[k],'var(--green)')).join('')}
+    </div>`:''}
+
+    <!-- R by framework quality -->
+    ${Object.keys(byFwQ).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by framework quality <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${FW_QUALITY.map(k=>rBar(k,byFwQ[k],'var(--amber)')).join('')}
+      <div style="margin-top:8px;padding:8px;background:var(--bg3);border-radius:var(--r);font-size:11px;color:var(--text2);line-height:1.6">
+        If <b style="color:var(--amber)">3 — Forced</b> shows worse R than <b>1 — Clear</b>, you are losing edge by trading ambiguous days.
+      </div>
+    </div>`:''}
+
+    <!-- R by pair divergence -->
+    ${Object.keys(byDiv).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by pair divergence <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${DIVERGENCE.map(k=>rBar(k,byDiv[k],'var(--blue)')).join('')}
+    </div>`:''}
+
+    <!-- R by management grade -->
+    ${Object.keys(byMgmt).length?`<div class="card" style="margin-bottom:10px">
+      <div class="section-label" style="margin-bottom:10px">R by management grade <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+      ${MGMT.map(k=>rBar(k,byMgmt[k],'var(--teal)')).join('')}
+      <div style="margin-top:8px;padding:8px;background:var(--bg3);border-radius:var(--r);font-size:11px;color:var(--text2);line-height:1.6">
+        Comparing <b>Held 2R</b> vs <b>Cut Early</b> shows exactly how much R you are leaving on the table.
+      </div>
+    </div>`:''}`;
+}
+
+function renderBtPerf(el){
+  const all=getBt();
+  if(!all.length){el.innerHTML='<div class="empty-state">No backtest entries yet.</div>';return}
+  const trades=all.filter(e=>e.rResult!==''&&e.rResult!==undefined&&!isNaN(parseFloat(e.rResult)));
+
+  const oc={Win:0,Loss:0,BE:0};
+  const inst={MNQ:0,MES:0},sess={},profile={};
+  all.forEach(e=>{
+    oc[e.outcome]=(oc[e.outcome]||0)+1;
+    if(e.instrument)inst[e.instrument]=(inst[e.instrument]||0)+1;
+    if(e.session)sess[e.session]=(sess[e.session]||0)+1;
+    if(e.dailyProfile)profile[e.dailyProfile]=(profile[e.dailyProfile]||0)+1;
+  });
+  const wr=oc.Win+oc.Loss>0?Math.round(oc.Win/(oc.Win+oc.Loss)*100):0;
+  const maxI=Math.max(...Object.values(inst),1);
+
+  let rHtml='';
+  if(trades.length){
+    const rs=trades.map(e=>parseFloat(e.rResult));
+    const wins=rs.filter(r=>r>0),losses=rs.filter(r=>r<0);
+    const totalR=rs.reduce((a,b)=>a+b,0);
+    const avgR=rs.length?totalR/rs.length:0;
+    const sumW=wins.reduce((a,b)=>a+b,0);
+    const sumL=Math.abs(losses.reduce((a,b)=>a+b,0));
+    const pf=sumL>0?(sumW/sumL):wins.length?999:0;
+    const byProfile=buildBreakdown(trades,e=>e.dailyProfile);
+    const byInst=buildBreakdown(trades,e=>e.instrument);
+    rHtml=`
+      <div class="stat-grid" style="margin-top:10px">
+        ${statCard(fmt(totalR),'total R',totalR>=0?'var(--green)':'var(--red)')}
+        ${statCard(fmt(avgR),'avg R / trade',avgR>=0?'var(--green)':'var(--red)')}
+        ${statCard(pf===999?'∞':pf.toFixed(2),'profit factor','var(--teal)')}
+        ${statCard(trades.length,'trades with R','')}
+      </div>
+      ${Object.keys(byInst).length?`<div class="card" style="margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:10px">R by instrument <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+        ${['MNQ','MES'].map(k=>rBar(k,byInst[k],'var(--teal)','60px')).join('')}
+      </div>`:''}
+      ${Object.keys(byProfile).length?`<div class="card" style="margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:10px">R by daily profile <span style="font-size:9px;color:var(--text3);margin-left:4px">avg R · win% · n</span></div>
+        ${PROFILES.map(k=>rBar(k,byProfile[k],'var(--amber)')).join('')}
+      </div>`:''}`;
+  }
+
+  el.innerHTML=`
+    <div class="stat-grid">
+      ${statCard(wr+'%','win rate','var(--green)')}
+      ${statCard(all.length,'total trades','')}
+      ${statCard(oc.Win,'wins','var(--green)')}
+      ${statCard(oc.Loss,'losses','var(--red)')}
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="section-label">By instrument</div>
+      ${['MNQ','MES'].map(k=>countBar(k,inst[k]||0,maxI,'var(--teal)','60px')).join('')}
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="section-label">By session</div>
+      ${SESSIONS.map(s=>countBar(s,sess[s]||0,Math.max(...Object.values(sess),1),'var(--blue)','60px')).join('')}
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="section-label">By daily profile</div>
+      ${PROFILES.map(p=>countBar(p,profile[p]||0,Math.max(...Object.values(profile),1),'var(--amber)','120px')).join('')}
+    </div>
+    ${rHtml}`;
 }
 
 /* ═══════════════════ SETTINGS / DRIVE ═══════════════════ */
 let _gapi=null,_tokenClient=null,_driveFileId=null,_syncTimer=null;
 
+/* ═══════════════════ PROP ACCOUNTS ═══════════════════ */
+function renderPropAccounts(){
+  const props=getProps();
+  const el=document.getElementById('prop-accounts-list');
+  if(!el)return;
+  if(!props.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:4px 0">No accounts added yet.</div>';
+    return;
+  }
+  el.innerHTML=props.map((p,i)=>{
+    const used=p.startBalance-p.currentBalance;
+    const pct=p.maxDrawdown>0?Math.min(100,Math.round(Math.abs(used)/p.maxDrawdown*100)):0;
+    const col=pct>=80?'var(--red)':pct>=50?'var(--amber)':'var(--green)';
+    return`<div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:600">${esc(p.name)}</span>
+        <div style="display:flex;gap:6px">
+          <button onclick="editPropAccount(${i})" style="background:none;border:1px solid var(--border2);border-radius:var(--r);padding:3px 9px;font-size:11px;cursor:pointer;color:var(--text2);font-family:inherit">Edit</button>
+          <button onclick="deletePropAccount(${i})" style="background:none;border:1px solid var(--red2);border-radius:var(--r);padding:3px 9px;font-size:11px;cursor:pointer;color:var(--red);font-family:inherit">Del</button>
+        </div>
+      </div>
+      <div class="prop-bar-track"><div class="prop-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3)">
+        <span>DD used: $${Math.abs(used).toLocaleString()} / $${p.maxDrawdown.toLocaleString()} (${pct}%)</span>
+        <span>Balance: $${p.currentBalance.toLocaleString()}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addPropAccount(){
+  const name=prompt('Account name (e.g. Apex 50K — Account 1):');
+  if(!name||!name.trim())return;
+  const start=parseFloat(prompt('Starting / funded balance ($):')||'0');
+  if(isNaN(start))return;
+  const dd=parseFloat(prompt('Max trailing drawdown limit ($):')||'0');
+  if(isNaN(dd))return;
+  const props=getProps();
+  props.push({id:uid(),name:name.trim(),startBalance:start,currentBalance:start,maxDrawdown:dd});
+  saveProps(props);renderPropAccounts();
+}
+
+function editPropAccount(i){
+  const props=getProps();const p=props[i];
+  const cur=parseFloat(prompt('Update current balance ($):',p.currentBalance)||p.currentBalance);
+  if(isNaN(cur))return;
+  props[i].currentBalance=cur;
+  saveProps(props);renderPropAccounts();
+  renderHome(); // refresh home screen bars
+}
+
+function deletePropAccount(i){
+  if(!confirm('Delete this account?'))return;
+  const props=getProps();props.splice(i,1);
+  saveProps(props);renderPropAccounts();
+  renderHome();
+}
+
 function renderSettings(){
   const cid=localStorage.getItem('ej_gcid')||'';
+  renderPropAccounts();
   if(cid){
     document.getElementById('client-id-input').value=cid;
     // if already configured, collapse the guide to just the input step
@@ -1045,7 +2093,9 @@ async function loadFromDrive(){
       const remote=typeof r.result==='string'?JSON.parse(r.result):r.result;
       // merge: keep newest by ts
       const local=getData();
-      const merged={live:mergeArr(local.live,remote.live||[]),bt:mergeArr(local.bt,remote.bt||[])};
+      // reviews is a key-value object, not an array — merge manually
+      const mergedReviews={...( remote.reviews||{}), ...(local.reviews||{})};
+      const merged={live:mergeArr(local.live,remote.live||[]),bt:mergeArr(local.bt,remote.bt||[]),plans:mergeArr(local.plans,remote.plans||[]),props:mergeArr(local.props,remote.props||[]),reviews:mergedReviews};
       localStorage.setItem('ej_data',JSON.stringify(merged));
     }
     await saveToDrive();
@@ -1142,7 +2192,7 @@ applyTheme(localStorage.getItem('ej_theme')==='dark');
 const _savedCid=localStorage.getItem('ej_gcid');
 if(_savedCid)setTimeout(()=>initGoogleAuth(_savedCid),500);
 
-startFlow();
+renderHome();
 </script>
 </body>
 </html>
